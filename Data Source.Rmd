@@ -10,7 +10,7 @@ Our goal is to compare the biogas produced from landfills to more traditional fu
 Our github repository for this project can be found at this [link](https://github.com/cabolz/STAT433-Project)
 
 
-
+Some data found from the EPA
 ```{r}
   library(readr)
   landFill<-read_csv("LandFillDataEasierToAccess.csv")
