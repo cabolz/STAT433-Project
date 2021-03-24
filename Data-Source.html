@@ -227,32 +227,112 @@ summary {
 ##   # ... with 1 more columns
 ## )
 ## ℹ Use `spec()` for the full column specifications.</code></pre>
-<pre class="r"><code>  head(landFill)</code></pre>
-<pre><code>## # A tibble: 6 x 40
-##   `GHGRP ID` `Landfill ID` `Landfill Name` State `Landfill Alias`
-##        &lt;dbl&gt;         &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt;           
-## 1    1007341          1994 Anchorage Regi… AK    &lt;NA&gt;            
-## 2    1010389         11941 Capitol Dispos… AK    &lt;NA&gt;            
-## 3    1005349         12216 Central Penins… AK    Soldotna Landfi…
-## 4         NA         10960 Kodiak Island … AK    &lt;NA&gt;            
-## 5    1004380         11020 Merrill Field … AK    &lt;NA&gt;            
-## 6    1011448         10980 Palmer Central… AK    Central Landfil…
-## # … with 35 more variables: `Physical Address` &lt;chr&gt;, City &lt;chr&gt;, County &lt;chr&gt;,
-## #   `Zip Code` &lt;chr&gt;, Latitude &lt;dbl&gt;, Longitude &lt;dbl&gt;, `Composting?` &lt;chr&gt;,
-## #   `Ownership Type` &lt;chr&gt;, `Landfill Owner Organization(s)` &lt;chr&gt;, `Landfill
-## #   Operator Organization` &lt;chr&gt;, `Year Landfill Opened` &lt;dbl&gt;, `Landfill
-## #   Closure Year` &lt;dbl&gt;, `Current Landfill Status` &lt;chr&gt;, `Design Landfill Area
-## #   (acres)` &lt;dbl&gt;, `Current Landfill Area (acres)` &lt;dbl&gt;, `Design Landfill
-## #   Depth (feet)` &lt;dbl&gt;, `Current Landfill Depth (feet)` &lt;dbl&gt;, `Landfill
-## #   Design Capacity (tons)` &lt;dbl&gt;, `Waste in Place (tons)` &lt;dbl&gt;, `Waste in
-## #   Place Year` &lt;dbl&gt;, `Annual Waste Acceptance Rate (tons per year)` &lt;dbl&gt;,
-## #   `Annual Waste Acceptance Year` &lt;dbl&gt;, `Does LF Recirculate
-## #   Leachate?` &lt;chr&gt;, `Leachate Recirc Frequency (Past 10 Yrs)` &lt;chr&gt;,
-## #   `Permitted as RD&amp;D LF?` &lt;chr&gt;, `LFG Generated (mmscfd)` &lt;dbl&gt;, `LFG
-## #   Collection System In Place?` &lt;chr&gt;, `LFG Collected (mmscfd)` &lt;dbl&gt;, `LFG
-## #   Collected Year` &lt;dbl&gt;, `Percent Methane` &lt;dbl&gt;, `Flares in Place?` &lt;chr&gt;,
-## #   `Number of Flares` &lt;dbl&gt;, `LFG Flared (mmscfd)` &lt;dbl&gt;, `LFG Flared
-## #   Year` &lt;dbl&gt;, `Gas Collection System Comments` &lt;chr&gt;</code></pre>
+<pre class="r"><code>  print.data.frame(head(landFill))</code></pre>
+<pre><code>##   GHGRP ID Landfill ID                    Landfill Name State
+## 1  1007341        1994      Anchorage Regional Landfill    AK
+## 2  1010389       11941        Capitol Disposal Landfill    AK
+## 3  1005349       12216 Central Peninsula Landfill (CPL)    AK
+## 4       NA       10960   Kodiak Island Borough Landfill    AK
+## 5  1004380       11020           Merrill Field Landfill    AK
+## 6  1011448       10980          Palmer Central Landfill    AK
+##                                                                        Landfill Alias
+## 1                                                                                &lt;NA&gt;
+## 2                                                                                &lt;NA&gt;
+## 3 Soldotna Landfill; Central Peninsula Baling Facility; Soldotna KPB Central Landfill
+## 4                                                                                &lt;NA&gt;
+## 5                                                                                &lt;NA&gt;
+## 6                                                    Central Landfill - MatSu Borough
+##                                                 Physical Address        City
+## 1                                 15500 E. Eagle River Loop Road Eagle River
+## 2                                            5600 Tonsgard Court      Juneau
+## 3                                         46915 Sterling Highway    Soldotna
+## 4                                         1203 Monashka Bay Road      Kodiak
+## 5                                        800 Merrill Field Drive   Anchorage
+## 6 1201 N. 49th State Street\nJust off the Palmer-Wasilla Highway      Palmer
+##              County Zip Code Latitude Longitude Composting? Ownership Type
+## 1         Anchorage    99577 61.29328 -149.6021          No         Public
+## 2            Juneau    99801 58.35280 -134.4947          No        Private
+## 3   Kenai Peninsula    99669 60.44714 -151.1037          No         Public
+## 4     Kodiak Island    99615 57.80874 -152.4076          No         Public
+## 5         Anchorage    99501 61.21266 -149.8401          No         Public
+## 6 Matanuska-Susitna    99645 61.59000 -149.2100          No         Public
+##   Landfill Owner Organization(s) Landfill Operator Organization
+## 1  Municipality of Anchorage, AK  Municipality of Anchorage, AK
+## 2         Waste Management, Inc.                           &lt;NA&gt;
+## 3    Kenai Peninsula Borough, AK    Kenai Peninsula Borough, AK
+## 4      Kodiak Island Borough, AK      Kodiak Island Borough, AK
+## 5  Municipality of Anchorage, AK                           &lt;NA&gt;
+## 6  Matanuska-Susitna Borough, AK  Matanuska-Susitna Borough, AK
+##   Year Landfill Opened Landfill Closure Year Current Landfill Status
+## 1                 1987                  2043                    Open
+## 2                 1965                  2045                    Open
+## 3                 1969                  2042                    Open
+## 4                   NA                  2014                  Closed
+## 5                 1960                  1987                  Closed
+## 6                 1980                  2168                    Open
+##   Design Landfill Area (acres) Current Landfill Area (acres)
+## 1                          165                         112.0
+## 2                           35                            NA
+## 3                           NA                          24.8
+## 4                           NA                            NA
+## 5                           NA                         185.7
+## 6                           NA                            NA
+##   Design Landfill Depth (feet) Current Landfill Depth (feet)
+## 1                          300                           150
+## 2                           NA                            38
+## 3                           NA                            NA
+## 4                           NA                           100
+## 5                           NA                            NA
+## 6                           NA                            45
+##   Landfill Design Capacity (tons) Waste in Place (tons) Waste in Place Year
+## 1                        27104639              10097255                2019
+## 2                         1770499                923523                2019
+## 3                         2703698               1680681                2019
+## 4                              NA                228688                2007
+## 5                         3295353               3295353                1987
+## 6                        41974220               1941322                2019
+##   Annual Waste Acceptance Rate (tons per year) Annual Waste Acceptance Year
+## 1                                       314319                         2019
+## 2                                        29002                         2019
+## 3                                        42077                         2019
+## 4                                        14674                         2007
+## 5                                       205044                         1987
+## 6                                        76443                         2019
+##   Does LF Recirculate Leachate? Leachate Recirc Frequency (Past 10 Yrs)
+## 1                            No                                Not used
+## 2                            No                                Not used
+## 3                           Yes                  Several times per year
+## 4                       Unknown                                Not used
+## 5                            No                                Not used
+## 6                            No                                Not used
+##   Permitted as RD&amp;D LF? LFG Generated (mmscfd) LFG Collection System In Place?
+## 1                   Yes                  7.330                             Yes
+## 2                    No                     NA                             Yes
+## 3                   Yes                  0.657                              No
+## 4                    No                     NA                              No
+## 5                    No                  0.590                             Yes
+## 6                   Yes                     NA                              No
+##   LFG Collected (mmscfd) LFG Collected Year Percent Methane Flares in Place?
+## 1                  3.383               2019            51.0              Yes
+## 2                  0.709               2019            23.3              Yes
+## 3                     NA                 NA              NA               No
+## 4                     NA                 NA              NA          Unknown
+## 5                  0.148               2019            33.4              Yes
+## 6                     NA                 NA              NA          Unknown
+##   Number of Flares LFG Flared (mmscfd) LFG Flared Year
+## 1                1                  NA              NA
+## 2                1               0.709            2019
+## 3               NA                  NA              NA
+## 4               NA                  NA              NA
+## 5                1               0.148            2019
+## 6               NA                  NA              NA
+##                                                                                                                                                                                                                Gas Collection System Comments
+## 1 4/10-GCCS in operation since Oct. 2006.; 2010-53 wells, system capacity=2000 acfm.; 9/13-36 vertical wells, 21 horizontal wells, and 8 interconnections with leachate system collect from 87 acres, enclosed flare from Parnell Industries.
+## 2                                                                                                                                                                        9/10-16 wells over 13 acres, system installed in 2009, 1 open flare.
+## 3                                                                                                                                                                                                                       2010-Passive venting.
+## 4                                                                                                                                                                                                                                        &lt;NA&gt;
+## 5                                                                                                                                                                                                    2012-30 wells, system capacity=500 acfm.
+## 6                                                                                                                                                                                                                                        &lt;NA&gt;</code></pre>
 
 
 

@@ -14,6 +14,6 @@ Put code here for reading in data
 ```{r}
   library(readr)
   landFill<-read_csv("LandFillDataEasierToAccess.csv")
-  head(landFill)
+  print.data.frame(head(landFill))
 ```
 
