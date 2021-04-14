@@ -101,10 +101,9 @@ library(maptools)
 library(broom)
 library(httr)
 library(rgdal)
-register_google("http://maps.googleapis.com/maps/api/staticmap?center=40.71,-74&zoom=11&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false")
-nyc_map <- get_map(location = c(lon = -74.00, lat = 40.71), maptype = "terrain", zoom = 11)
-ggmap(nyc_map)
-
+leaflet() %>%
+  addTiles() %>%
+  setView(-74.00, 40.71, zoom = 12)
 ```
 How does the Weather effect pickups?
 ```{r}
@@ -114,4 +113,7 @@ w<-UberandWeather %>%
 w
 ```
 
+```{r}
+
+```
 
