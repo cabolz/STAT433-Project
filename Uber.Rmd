@@ -7,6 +7,10 @@ output: html_document
 library(dplyr)
 library(readr)
 library(tidyverse)
+```
+
+
+```{r}
 ?read_excel
 location<-read_csv("aprildata.csv") 
 brokenUp<-location %>% 
@@ -53,6 +57,7 @@ datasc<-full_join(datasb,brokenUp5)
 fullData<-full_join(datasc,brokenUp6)
 fullData
 ```
+
 I found some data on weather in New York City but it was from 2012 to 2017 so I had to cut some of the fat out
 ```{r}
 hum<-read_csv("humidity.csv")
@@ -84,12 +89,14 @@ weatherData<-full_join(d,JustTemp) %>%
   separate(hour,into = c("hour"),sep = ":")
 weatherData #Full data set for weather in New York City 
 ```
+
 Uber and Weather together
 ```{r}
 UberandWeather<-fullData %>% 
   full_join(weatherData)
 UberandWeather
 ```
+
 Trying to get the NYC map
 ```{r}
 library(tigris)
@@ -105,6 +112,7 @@ leaflet() %>%
   addTiles() %>%
   setView(-74.00, 40.71, zoom = 12)
 ```
+
 How does the Weather effect pickups?
 ```{r}
 w<-UberandWeather %>% 
