@@ -3,7 +3,7 @@ title: "Uber"
 output: html_document
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(dplyr)
 library(readr)
 library(tidyverse)
@@ -11,45 +11,57 @@ library(tidyverse)
 
 
 ```{r}
-?read_excel
 location<-read_csv("aprildata.csv") 
+
 brokenUp<-location %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
-brokenUp
+
 loc2<-read_csv("uber-raw-data-may14.csv")
+
 brokenUp2<-loc2 %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
+
 loc3<-read_csv("uber-raw-data-jun14.csv")
+
 brokenUp3<-loc3 %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
+
 loc4<-read_csv("uber-raw-data-jul14.csv")
+
 brokenUp4<-loc4 %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
-brokenUp4
+
 loc5<-read_csv("uber-raw-data-aug14.csv")
+
 brokenUp5<-loc5 %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
+
 loc6<-read_csv("uber-raw-data-sep14.csv")
+
 brokenUp6<-loc6 %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
+```
+
+
+```{r}
 datas<-full_join(brokenUp,brokenUp2)
 datasa<-full_join(datas,brokenUp3)
 datasb<-full_join(datasa,brokenUp4)
@@ -61,22 +73,25 @@ fullData
 I found some data on weather in New York City but it was from 2012 to 2017 so I had to cut some of the fat out
 ```{r}
 hum<-read_csv("humidity.csv")
+
 Humidityin2014<-hum %>% 
   separate("datetime", into = c("Date","hour"), sep = " ") %>% 
   separate("Date", into = c("month","day","year"),sep="/") %>% 
   filter(year==14) %>% 
   mutate(Humidity = `New York`) %>% 
   transmute(hour,day,month,year,Humidity)
-Humidityin2014
+
 Sky<-read_csv("weather_description.csv")
+
 JustNewYorkSky<-Sky %>% 
   separate("datetime", into = c("Date","hour"), sep = " ") %>% 
   separate("Date", into = c("month","day","year"), sep="/") %>% 
   filter(year==14) %>% 
   mutate(SkyDesciption=`New York`) %>% 
   transmute(hour,day,month,year,SkyDesciption)
-JustNewYorkSky
+
 temp<-read_csv("temperature.csv")
+
 JustTemp<-temp %>% 
   separate("datetime", into = c("Date","hour"), sep=" ") %>% 
   separate("Date", into = c("month","day","year"),sep="/") %>% 
@@ -84,17 +99,19 @@ JustTemp<-temp %>%
   transmute(hour,day,month,year,`New York`) %>% 
   mutate(temperature=((`New York`-273.15)*9/5)+32) %>% 
   transmute(hour,day,month,year,temperature)
+
 d<-full_join(Humidityin2014,JustNewYorkSky)
+
 weatherData<-full_join(d,JustTemp) %>% 
   separate(hour,into = c("hour"),sep = ":")
-weatherData #Full data set for weather in New York City 
 ```
 
 Uber and Weather together
 ```{r}
 UberandWeather<-fullData %>% 
   full_join(weatherData)
-UberandWeather
+
+write_csv = (UberandWeather, "UberandWeather.csv")
 ```
 
 Trying to get the NYC map
