@@ -111,7 +111,7 @@ Uber and Weather together
 UberandWeather<-fullData %>% 
   full_join(weatherData)
 
-write_csv = (UberandWeather, "UberandWeather.csv")
+write_csv(UberandWeather, "UberandWeather.csv")
 ```
 
 Trying to get the NYC map
