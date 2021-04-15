@@ -128,6 +128,19 @@ w
 ```
 
 ```{r}
-
+?arrange()
+library(ggplot2)
+tail(UberandWeather)
+sum<-UberandWeather %>%
+  filter(month == 5) %>% 
+  group_by(day) %>% 
+  summarize(pickup=n(), temp = mean(temperature))
+sum
+ggplot(
+    data = UberandWeather,
+    mapping = aes(x = sum$day, y = sum$pickup, col = sum$temp)
+  ) +
+  geom_point() +
+  geom_abline()
 ```
 
