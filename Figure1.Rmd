@@ -36,3 +36,8 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
     fill = "Temperature") +
   scale_x_continuous(breaks = waiver(), n.breaks = 6)
 ```
+
+Our project analyzes the specific factors that influence ‘Uber’ app usage within New York City, specifically looking at May 2014. Figure1 implements a bar graph visualization that helps us further explore our overarching question. The total number of Uber pickups within a given day is on the y-axis, and each day of the month across the x-axis. The color of each bar is encoded as the temperature in Fahrenheit of each day, with lighter colors representing colder temperatures. 
+
+
+As shown in this figure, the number of Uber pickups seem to oscillate in a consistent pattern. The lowest usage point for each week happens around Sunday/Monday. Uber usage rate then rises steadily each day until usage peaks on Thursdays/Fridays. This pattern is apparent across all four weeks of May 2014. It is shown that usage peaks every week, at the end of each work week (Thursday/Friday). This makes sense because the weekend is when people usually have time for leisure activities, that might be out of their daily routine and require alternate transportation.
