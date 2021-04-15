@@ -111,10 +111,13 @@ Uber and Weather together
 UberandWeather<-fullData %>% 
   full_join(weatherData) 
 
-UberandWeather <- subset(UberandWeather, select = c("Date", "hour", "minute", "Lat", "Lon", "month", "day", "year", "Humidity", "SkyDesciption", "temperature"))
+UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "year", "Humidity", "SkyDesciption", "temperature"))
 
 UberandWeather <- na.omit(UberandWeather)
+```
 
+
+```{r}
 write_csv(UberandWeather, "UberandWeather.csv")
 ```
 
