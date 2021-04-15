@@ -1,0 +1,38 @@
+---
+title: "Project Draft: Figure 1"
+author: "Caitlin Bolz, Matt Voss, Steven Xia"
+output: pdf_document
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(ggplot2)
+library(readr)
+library(dplyr)
+```
+
+
+```{r include=FALSE}
+UberandWeather = read_csv("UberandWeather.csv")
+```
+
+```{r include=FALSE}
+sum<-UberandWeather %>%
+  filter(month == 5) %>% 
+  group_by(day) %>% 
+  summarize(pickup=n(), temp = mean(temperature))
+
+sum$day = as.numeric(sum$day)
+```
+
+
+```{r echo=FALSE}
+ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
+  geom_col() +
+  scale_fill_gradient(low = "white", high = "red") +
+  labs(
+    title = "Number of Uber Pickups in NYC in May 2014",
+    x = "Day of the Month",
+    y = "Number of Pickups",
+    fill = "Temperature") +
+  scale_x_continuous(breaks = waiver(), n.breaks = 6)
+```

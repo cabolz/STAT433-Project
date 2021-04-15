@@ -117,14 +117,6 @@ leaflet() %>%
   setView(-74.00, 40.71, zoom = 12)
 ```
 
-How does the Weather effect pickups?
-```{r}
-w<-UberandWeather %>% 
-  group_by(day,month) %>% 
-  mutate(daily=mean(temperature))
-w
-```
-
 ```{r}
 library(ggplot2)
 
