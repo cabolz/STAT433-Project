@@ -11,7 +11,7 @@ library(tidyverse)
 
 
 ```{r}
-location<-read_csv("aprildata.csv") 
+location<-read_csv("uber-raw-data-apr14.csv") 
 
 brokenUp<-location %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
@@ -26,48 +26,12 @@ brokenUp2<-loc2 %>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
-
-loc3<-read_csv("uber-raw-data-jun14.csv")
-
-brokenUp3<-loc3 %>% 
-  separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
-  mutate("date"=Date) %>% 
-  separate("date", into = c("month","day","year"),sep="/")%>% 
-  separate(Time, into = c("hour","minute"),sep=":")
-
-loc4<-read_csv("uber-raw-data-jul14.csv")
-
-brokenUp4<-loc4 %>% 
-  separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
-  mutate("date"=Date) %>% 
-  separate("date", into = c("month","day","year"),sep="/")%>% 
-  separate(Time, into = c("hour","minute"),sep=":")
-
-loc5<-read_csv("uber-raw-data-aug14.csv")
-
-brokenUp5<-loc5 %>% 
-  separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
-  mutate("date"=Date) %>% 
-  separate("date", into = c("month","day","year"),sep="/")%>% 
-  separate(Time, into = c("hour","minute"),sep=":")
-
-loc6<-read_csv("uber-raw-data-sep14.csv")
-
-brokenUp6<-loc6 %>% 
-  separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
-  mutate("date"=Date) %>% 
-  separate("date", into = c("month","day","year"),sep="/")%>% 
-  separate(Time, into = c("hour","minute"),sep=":")
 ```
 
 
 ```{r}
-datas<-full_join(brokenUp,brokenUp2)
-datasa<-full_join(datas,brokenUp3)
-datasb<-full_join(datasa,brokenUp4)
-datasc<-full_join(datasb,brokenUp5)
-fullData<-full_join(datasc,brokenUp6)
-fullData
+uberDataSet<-full_join(brokenUp,brokenUp2)
+
 ```
 
 I found some data on weather in New York City but it was from 2012 to 2017 so I had to cut some of the fat out
@@ -108,7 +72,7 @@ weatherData<-full_join(d,JustTemp) %>%
 
 Uber and Weather together
 ```{r}
-UberandWeather<-fullData %>% 
+UberandWeather<-uberDataSet %>% 
   full_join(weatherData) 
 
 UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature"))
@@ -119,6 +83,7 @@ UberandWeather <- na.omit(UberandWeather)
 
 ```{r}
 write_csv(UberandWeather, "UberandWeather.csv")
+
 ```
 
 ```{r}
