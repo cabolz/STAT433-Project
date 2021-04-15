@@ -109,7 +109,9 @@ weatherData<-full_join(d,JustTemp) %>%
 Uber and Weather together
 ```{r}
 UberandWeather<-fullData %>% 
-  full_join(weatherData)
+  full_join(weatherData) 
+
+UberandWeather <- subset(UberandWeather, select = c("Date", "hour", "minute", "Lat", "Lon", "month", "day", "year", "Humidity", "SkyDesciption", "temperature"))
 
 write_csv(UberandWeather, "UberandWeather.csv")
 ```
