@@ -116,6 +116,23 @@ UberandWeather <- subset(UberandWeather, select = c("Date", "hour", "minute", "L
 write_csv(UberandWeather, "UberandWeather.csv")
 ```
 
+```{r}
+UberandWeather %>% summarise(sum(is.na(Humidity)))
+```
+# of NA's
+date = 4369
+hour = 0
+minute = 4369
+Lat = 4369
+Lon = 4369
+month = 0
+day = 0
+year = 0
+Humidity = 22010
+SkyDescription = 0
+temperature = 0
+
+
 Trying to get the NYC map
 ```{r}
 library(tigris)
