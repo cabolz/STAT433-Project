@@ -137,10 +137,9 @@ sum<-UberandWeather %>%
   summarize(pickup=n(), temp = mean(temperature))
 sum
 ggplot(
-    data = UberandWeather,
-    mapping = aes(x = sum$day, y = sum$pickup, col = sum$temp)
+    data = sum,
+    mapping = aes(x = day, y = pickup, col = temp)
   ) +
-  geom_point() +
-  geom_abline()
+  geom_point()
 ```
 
