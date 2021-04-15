@@ -136,27 +136,11 @@ sum<-UberandWeather %>%
 
 sum
 
-sum_order = sum %>% 
-  group_by(day) %>% 
-  arrange(aesc(day)) %>% 
-  pull(day)
-
-sum_order
-
-group_order = scores %>% 
-  group_by(group) %>% 
-  summarise(mean = mean(PC2)) %>% 
-  arrange(desc(mean)) %>% 
-  pull(group)
-
-group_order
-
-scores = scores %>% mutate(group = factor(group,  levels = group_order))
-
 ggplot(
     data = sum,
     mapping = aes(x = day, y = pickup, fill = temp)
   ) +
-  geom_col()
+  geom_col() +
+  scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', midpoint = 50)
 ```
 
