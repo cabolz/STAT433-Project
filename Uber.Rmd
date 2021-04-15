@@ -113,6 +113,8 @@ UberandWeather<-fullData %>%
 
 UberandWeather <- subset(UberandWeather, select = c("Date", "hour", "minute", "Lat", "Lon", "month", "day", "year", "Humidity", "SkyDesciption", "temperature"))
 
+UberandWeather <- na.omit(UberandWeather)
+
 write_csv(UberandWeather, "UberandWeather.csv")
 ```
 
