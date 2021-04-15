@@ -46,8 +46,8 @@ ui <- fluidPage(
   p(),
   actionButton("recalc", "New points")
 )
-?
-  server <- function(input, output, session) {
+
+server <- function(input, output, session) {
     
     points <- eventReactive(input$recalc, {
       cbind(rnorm(40) * 2 + 13, rnorm(40) + 48)
@@ -72,4 +72,3 @@ app <- shinyApp(
   }
 )
 runApp(app)
-
