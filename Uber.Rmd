@@ -10,7 +10,7 @@ library(tidyverse)
 ```
 
 
-```{r}
+```{r message=FALSE}
 location<-read_csv("uber-raw-data-apr14.csv") 
 
 brokenUp<-location %>% 
@@ -29,13 +29,12 @@ brokenUp2<-loc2 %>%
 ```
 
 
-```{r}
+```{r message=FALSE}
 uberDataSet<-full_join(brokenUp,brokenUp2)
-
 ```
 
 I found some data on weather in New York City but it was from 2012 to 2017 so I had to cut some of the fat out
-```{r}
+```{r message=FALSE}
 hum<-read_csv("humidity.csv")
 
 Humidityin2014<-hum %>% 
@@ -71,7 +70,7 @@ weatherData<-full_join(d,JustTemp) %>%
 ```
 
 Uber and Weather together
-```{r}
+```{r warning=FALSE}
 UberandWeather<-uberDataSet %>% 
   full_join(weatherData) 
 
@@ -83,7 +82,6 @@ UberandWeather <- na.omit(UberandWeather)
 
 ```{r}
 write_csv(UberandWeather, "UberandWeather.csv")
-
 ```
 
 ```{r}
@@ -133,7 +131,7 @@ library(ggplot2)
 tail(UberandWeather)
 sum<-UberandWeather %>%
   filter(month == 5) %>% 
-  group_by(day) %>% 
+  group_by(month, day) %>% 
   summarize(pickup=n(), temp = mean(temperature))
 sum
 ggplot(
