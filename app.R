@@ -8,15 +8,14 @@ library(leaflet)
 # Load in dataset
 UberandWeather = read_csv("UberandWeather.csv")
 
-ui<-fluidPage(
-  titlePanel("NYC Map"),
-  
-  sidebarLayout(
-    mainPanel(leaflet() %>%
-                addTiles() %>%
-                setView(-74.00, 40.71, zoom = 12))  
-  )
-)
+uia<-fluidPage(leafletOutput('NYCMap'),titlePanel("NYC Map"))
+
+server1<- function(input, output){
+  map<-leaflet()%>% addTiles()%>% setView(-73.95,40.71,zoom=11)
+  output$NYCMap<-renderLeaflet(map)
+}
+
+shinyApp(ui = uia, server = server1)
 
 ?leafletOutput #I'm using the example from this help question and changed the coordinates
 
