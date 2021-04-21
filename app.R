@@ -1,73 +1,21 @@
-library(shiny)
-library(readr)
-library(ggplot2)
+library(tigris)
 library(dplyr)
-library(plotly)
 library(leaflet)
-
-# Load in dataset
-UberandWeather = read_csv("UberandWeather.csv")
-
-uia<-fluidPage(leafletOutput('NYCMap'),titlePanel("NYC Map"))
-
-server1<- function(input, output){
-  map<-leaflet()%>% addTiles()%>% setView(-73.95,40.71,zoom=11)
-  output$NYCMap<-renderLeaflet(map)
-}
-
-shinyApp(ui = uia, server = server1)
-
-?leafletOutput #I'm using the example from this help question and changed the coordinates
-
-NewYorkCityMap<-shinyApp(
-  ui<-fluidPage(leafletOutput('NYCMap'),titlePanel("NYC Map")),
-  server <- function(input,output){
-    map<-leaflet() %>% addTiles() %>% setView(-74.00,40.71, zoom =11)
-    output$NYCMap<-renderLeaflet(map)
-  }
-)              
-runApp(NewYorkCityMap)
-
-data
-
-NYC<-leaflet() %>%
-  addTiles() %>%
-  setView(-74.00, 40.71, zoom = 10)
-NYC
-# Define UI for app that draws a histogram ----
-# found this on the internet, I just want to map the map and add the points later with nyc data
-?leafletOutput
-
-r_colors <- rgb(t(col2rgb(colors()) / 255))
-names(r_colors) <- colors()
-ui <- fluidPage(
-  leafletOutput("mymap"),
-  p(),
-  actionButton("recalc", "New points")
-)
-
-server <- function(input, output, session) {
-    
-    points <- eventReactive(input$recalc, {
-      cbind(rnorm(40) * 2 + 13, rnorm(40) + 48)
-    }, ignoreNULL = FALSE)
-    
-    output$mymap <- renderLeaflet({
-      leaflet() %>%
-        addProviderTiles(providers$Stamen.TonerLite,
-                         options = providerTileOptions(noWrap = TRUE)
-        ) %>%
-        addMarkers(data = points())
-    })
-  }
-
-shinyApp(ui, server)
-
-app <- shinyApp(
-  ui = fluidPage(leafletOutput('Map')),
-  server = function(input, output) {
-    map = leaflet() %>% addTiles() %>% setView(-97.65, 42.0285, zoom = 17)
-    output$Map = renderLeaflet(map)
-  }
-)
-runApp(app)
+library(sp)
+library(ggmap)
+library(maptools)
+library(broom)
+library(httr)
+library(rgdal)
+nyc_map <- get_map(location = c(lon = -74.00, lat = 40.78), maptype = "terrain", zoom = 11)
+ggmap(nyc_map)
+register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
+r <- GET('http://data.beta.nyc//dataset/0ff93d2d-90ba-457c-9f7e-39e47bf2ac5f/resource/35dd04fb-81b3-479b-a074-a27a37888ce7/download/d085e2f8d0b54d4590b1e7d1f35594c1pediacitiesnycneighborhoods.geojson')
+nyc_neighborhoods <- readOGR(content(r,'text'), 'OGRGeoJSON', verbose = F)
+summary(nyc_neighborhoods)
+nyc_neighborhoods_df <- tidy(nyc_neighborhoods)
+ggplot() + 
+  geom_polygon(data=nyc_neighborhoods_df, aes(x=long, y=lat, group=group))
+ggmap(nyc_map) + 
+  geom_polygon(data=nyc_neighborhoods_df, aes(x=long, y=lat, group=group), color="blue", fill=NA)
+nyc_neighborhoods_df$long

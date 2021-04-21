@@ -139,7 +139,5 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
 ```
 I wanna test the areas that we want to use for the map
 ```{r}
-uberDataSet %>% 
-  group_by(Lat,Lon)
 
 ```
