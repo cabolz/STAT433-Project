@@ -129,7 +129,10 @@ proj4string(coor_spdf)<- proj4string(nyc_neighborhoods)
 matches <- over(coor_spdf, nyc_neighborhoods)
 coor <- cbind(coor,matches)
 coor
-points_by_neighborhood <- coor %>% 
+queen <- coor %>% 
+  filter(borough=="Queens")
+queen
+points_by_neighborhood <- queen %>% 
   group_by(neighborhood) %>% 
   summarize(num_points=n())
 map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood,"neighborhood", "neighborhood")
@@ -144,3 +147,4 @@ ggmap(manhattan_map) +
 queens_map <- get_map(location = c(lon = -73.81, lat = 40.72), maptype = "terrain", zoom = 11)
 ggmap(queens_map) +
   geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
+
