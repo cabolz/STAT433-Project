@@ -140,45 +140,17 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
 ```
 Trying to put these datasets together
 ```{r}
-UberandWeather
+tail(UberandWeather)
 W<-UberandWeather %>% 
   mutate(long = Lon) %>% 
   mutate(lat = Lat)
-sixdecimalplaces<-nyc_neighborhoods_df %>% 
-  mutate(long = round(nyc_neighborhoods_df$long,4), lat = round(nyc_neighborhoods_df$lat,4))
-byCounty<- sixdecimalplaces %>% #this finally works
+tail(W)
+byCounty<- slender %>% #this finally works
   right_join(W)
-byCounty
-missing<-byCounty %>% 
-  transmute(miss = sum(is.na(id)))
-missing
 char<-c(0:309)
 nyc_neighborhoods$id=as.character(char)
-nyc_neighborhoods
-justCountyand
-
-countyAndBorough<-justCountyand %>% 
-  full_join(byCounty)
-countyAndBorough
-curiosity<-countyAndBorough %>% 
-  filter(nyc_neighborhoods.borough == 'Manhattan')
-curiosity
-
-
-library(data.table)
-
-a=data.table(Value=c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15))
-
-a[,merge:=Value]
-
-b=data.table(Value=c(4,6,10,16))
-
-b[,merge:=Value]
-
-setkeyv(a,c('merge'))
-
-setkeyv(b,c('merge'))
-
-Merge_a_b=a[b,roll='nearest']
-Merge_a_b
+slender
+countyAndBorough<-slender %>% 
+  right_join(byCounty)
+tail(countyAndBorough)
 ```

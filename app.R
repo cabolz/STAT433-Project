@@ -28,3 +28,8 @@ justCountyandBurough
 justCountyand<-justCountyandBurough %>% 
   full_join(nyc_neighborhoods_df)
 justCountyand
+slender<-justCountyand %>% 
+  transmute(nyc_neighborhoods.neighborhood,nyc_neighborhoods.boroughCode,nyc_neighborhoods.borough,id,
+            long = round(long,4), lat = round(lat,4),order,hole,piece,group)
+slender
+tail(justCountyand)
