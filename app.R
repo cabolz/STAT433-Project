@@ -22,3 +22,5 @@ nyc_neighborhoods_df$id
 
 UberandWeather
 
+justCountyandBurough<-data.frame(nyc_neighborhoods$neighborhood,nyc_neighborhoods$boroughCode,nyc_neighborhoods$borough,nyc_neighborhoods$id)
+justCountyandBurough
