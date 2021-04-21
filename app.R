@@ -18,4 +18,7 @@ ggplot() +
   geom_polygon(data=nyc_neighborhoods_df, aes(x=long, y=lat, group=group))
 ggmap(nyc_map) + 
   geom_polygon(data=nyc_neighborhoods_df, aes(x=long, y=lat, group=group), color="blue", fill=NA)
-nyc_neighborhoods_df$long
+nyc_neighborhoods_df$id
+
+UberandWeather
+

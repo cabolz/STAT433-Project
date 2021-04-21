@@ -77,6 +77,17 @@ UberandWeather<-uberDataSet %>%
 UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature"))
 
 UberandWeather <- na.omit(UberandWeather)
+
+sixdecimalplaces<-nyc_neighborhoods_df %>% 
+  mutate(long = round(nyc_neighborhoods_df$long,4), lat = round(nyc_neighborhoods_df$lat,4))
+sixdecimalplaces
+byCounty<- sixdecimalplaces %>% #this finally works
+  group_by(id) %>% 
+  right_join(W)
+nyc_neighborhoods$id=c(0:309)
+countyWithBurough<-nyc_neighborhoods %>% 
+  full_join(byCounty)
+nyc_neighborhoods
 ```
 
 
