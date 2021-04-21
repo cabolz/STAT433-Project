@@ -144,22 +144,41 @@ UberandWeather
 W<-UberandWeather %>% 
   mutate(long = Lon) %>% 
   mutate(lat = Lat)
-W
 sixdecimalplaces<-nyc_neighborhoods_df %>% 
   mutate(long = round(nyc_neighborhoods_df$long,4), lat = round(nyc_neighborhoods_df$lat,4))
-sixdecimalplaces
 byCounty<- sixdecimalplaces %>% #this finally works
-  group_by(id) %>%
   right_join(W)
+byCounty
+missing<-byCounty %>% 
+  transmute(miss = sum(is.na(id)))
+missing
 char<-c(0:309)
 nyc_neighborhoods$id=as.character(char)
 nyc_neighborhoods
-justCountyandBurough
-properNames<-justCountyandBurough %>% 
-  mutate(id = nyc_neighborhoods.id)
-properNames
-countyAndBorough<-properNames %>% 
-  group_by(id) %>% 
-  right_join(byCounty)
+justCountyand
+
+countyAndBorough<-justCountyand %>% 
+  full_join(byCounty)
 countyAndBorough
+curiosity<-countyAndBorough %>% 
+  filter(nyc_neighborhoods.borough == 'Manhattan')
+curiosity
+
+
+library(data.table)
+
+a=data.table(Value=c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15))
+
+a[,merge:=Value]
+
+b=data.table(Value=c(4,6,10,16))
+
+b[,merge:=Value]
+
+setkeyv(a,c('merge'))
+
+setkeyv(b,c('merge'))
+
+Merge_a_b=a[b,roll='nearest']
+Merge_a_b
 ```

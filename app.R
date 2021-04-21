@@ -21,6 +21,10 @@ ggmap(nyc_map) +
 nyc_neighborhoods_df$id
 
 UberandWeather
-
+nyc_neighborhoods_df
 justCountyandBurough<-data.frame(nyc_neighborhoods$neighborhood,nyc_neighborhoods$boroughCode,nyc_neighborhoods$borough,nyc_neighborhoods$id)
+justCountyandBurough<-mutate(justCountyandBurough,id = nyc_neighborhoods.id)
 justCountyandBurough
+justCountyand<-justCountyandBurough %>% 
+  full_join(nyc_neighborhoods_df)
+justCountyand
