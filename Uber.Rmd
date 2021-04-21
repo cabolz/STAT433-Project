@@ -77,21 +77,7 @@ UberandWeather<-uberDataSet %>%
 UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature"))
 
 UberandWeather <- na.omit(UberandWeather)
-UberandWeather
-W<-UberandWeather %>% 
-  mutate(long = Lon) %>% 
-  mutate(lat = Lat)
-W
-sixdecimalplaces<-nyc_neighborhoods_df %>% 
-  mutate(long = round(nyc_neighborhoods_df$long,4), lat = round(nyc_neighborhoods_df$lat,4))
-sixdecimalplaces
-byCounty<- sixdecimalplaces %>% #this finally works
-  group_by(id) %>% 
-  right_join(W)
-byCounty
-nyc_neighborhoods$id=c(0:309)
-properNames<-justCountyandBurough %>% 
-  transmute()
+
 ```
 
 
@@ -152,7 +138,28 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
     fill = "Temperature") +
   scale_x_continuous(breaks = waiver(), n.breaks = 6)
 ```
-I wanna test the areas that we want to use for the map
+Trying to put these datasets together
 ```{r}
-
+UberandWeather
+W<-UberandWeather %>% 
+  mutate(long = Lon) %>% 
+  mutate(lat = Lat)
+W
+sixdecimalplaces<-nyc_neighborhoods_df %>% 
+  mutate(long = round(nyc_neighborhoods_df$long,4), lat = round(nyc_neighborhoods_df$lat,4))
+sixdecimalplaces
+byCounty<- sixdecimalplaces %>% #this finally works
+  group_by(id) %>%
+  right_join(W)
+char<-c(0:309)
+nyc_neighborhoods$id=as.character(char)
+nyc_neighborhoods
+justCountyandBurough
+properNames<-justCountyandBurough %>% 
+  mutate(id = nyc_neighborhoods.id)
+properNames
+countyAndBorough<-properNames %>% 
+  group_by(id) %>% 
+  right_join(byCounty)
+countyAndBorough
 ```
