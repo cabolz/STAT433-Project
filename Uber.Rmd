@@ -141,16 +141,20 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
 Trying to put these datasets together
 ```{r}
 tail(UberandWeather)
+View(UberandWeather)
 W<-UberandWeather %>% 
-  mutate(long = Lon) %>% 
-  mutate(lat = Lat)
+  mutate(long = round(Lon,4)) %>% 
+  mutate(lat = round(Lat,4))
 tail(W)
 byCounty<- slender %>% #this finally works
   right_join(W)
+byCounty
 char<-c(0:309)
 nyc_neighborhoods$id=as.character(char)
 slender
-countyAndBorough<-slender %>% 
-  right_join(byCounty)
-tail(countyAndBorough)
+countryandBorough<-slender %>% 
+  right_join(W)
+countyAndBorough %>% 
+  mutate(su = sum(is.na(nyc_neighborhoods.borough)))
+
 ```
