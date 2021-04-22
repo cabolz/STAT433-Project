@@ -118,6 +118,7 @@ manhattan_map <- get_map(location = c(lon = -74.00, lat = 40.77), maptype = "ter
 ggmap(manhattan_map) + 
   geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
 
+#Queens Borough info
 lati<- W %>% transmute(W$lat)
 longti<- W %>% transmute(W$long)
 coor <- data.frame("lat" = lati, "long" = longti)
@@ -147,4 +148,38 @@ ggmap(manhattan_map) +
 queens_map <- get_map(location = c(lon = -73.81, lat = 40.72), maptype = "terrain", zoom = 11)
 ggmap(queens_map) +
   geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
+fullQueensData <- coor %>% 
+  full_join(W)
 
+#Brooklyn Borough
+latb=W %>% 
+  transmute(W$lat)
+lonb=W %>% 
+  transmute(W$long)
+coorb <- data.frame("lat" = latb, "long" = lonb)
+coorb <- coor %>% transmute(lat = W.lat, long = W.long)
+coorb
+coor_spdfb=coorb
+coordinates(coor_spdfb)<- ~long + lat
+proj4string(coor_spdfb)<- proj4string(nyc_neighborhoods)
+matches <- over(coor_spdfb, nyc_neighborhoods)
+coorb <- cbind(coorb,matches)
+coorb
+brooklyn <- coorb %>% 
+  filter(borough=="Brooklyn")
+brooklyn
+points_by_neighborhood <- brooklyn%>% 
+  group_by(neighborhood) %>% 
+  summarize(num_points=n())
+map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood,"neighborhood", "neighborhood")
+pal <- colorNumeric(palette = "RdBu",
+                    domain = range(map_data@data$num_points, na.rm=T))
+plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
+  left_join(., points_by_neighborhood, by=c("id"="neighborhood")) %>%
+  filter(!is.na(num_points))
+brooklyn_map <- get_map(location = c(lon = -73.92, lat = 40.66), maptype = "terrain", zoom =12)
+ggmap(brooklyn_map) + 
+  geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
+fullBrooklynData<-coorb %>% 
+  full_join(W)
+fullBrooklynData

@@ -12,15 +12,12 @@ library(tidyverse)
 
 ```{r message=FALSE}
 location<-read_csv("uber-raw-data-apr14.csv") 
-
 brokenUp<-location %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
-
 loc2<-read_csv("uber-raw-data-may14.csv")
-
 brokenUp2<-loc2 %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
@@ -36,25 +33,20 @@ uberDataSet<-full_join(brokenUp,brokenUp2)
 I found some data on weather in New York City but it was from 2012 to 2017 so I had to cut some of the fat out
 ```{r message=FALSE}
 hum<-read_csv("humidity.csv")
-
 Humidityin2014<-hum %>% 
   separate("datetime", into = c("Date","hour"), sep = " ") %>% 
   separate("Date", into = c("month","day","year"),sep="/") %>% 
   filter(year==14) %>% 
   mutate(Humidity = `New York`) %>% 
   transmute(hour,day,month,year,Humidity)
-
 Sky<-read_csv("weather_description.csv")
-
 JustNewYorkSky<-Sky %>% 
   separate("datetime", into = c("Date","hour"), sep = " ") %>% 
   separate("Date", into = c("month","day","year"), sep="/") %>% 
   filter(year==14) %>% 
   mutate(SkyDesciption=`New York`) %>% 
   transmute(hour,day,month,year,SkyDesciption)
-
 temp<-read_csv("temperature.csv")
-
 JustTemp<-temp %>% 
   separate("datetime", into = c("Date","hour"), sep=" ") %>% 
   separate("Date", into = c("month","day","year"),sep="/") %>% 
@@ -62,9 +54,7 @@ JustTemp<-temp %>%
   transmute(hour,day,month,year,`New York`) %>% 
   mutate(temperature=((`New York`-273.15)*9/5)+32) %>% 
   transmute(hour,day,month,year,temperature)
-
 d<-full_join(Humidityin2014,JustNewYorkSky)
-
 weatherData<-full_join(d,JustTemp) %>% 
   separate(hour,into = c("hour"),sep = ":")
 ```
@@ -73,11 +63,8 @@ Uber and Weather together
 ```{r warning=FALSE}
 UberandWeather<-uberDataSet %>% 
   full_join(weatherData) 
-
 UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature"))
-
 UberandWeather <- na.omit(UberandWeather)
-
 ```
 
 
@@ -120,14 +107,11 @@ leaflet() %>%
 
 ```{r}
 library(ggplot2)
-
 sum<-UberandWeather %>%
   filter(month == 5) %>% 
   group_by(day) %>% 
   summarize(pickup=n(), temp = mean(temperature))
-
 sum$day = as.numeric(sum$day)
-
 ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
   geom_col() +
   scale_fill_gradient(low = "white", high = "red") +
@@ -156,5 +140,4 @@ countryandBorough<-slender %>%
   right_join(W)
 countyAndBorough %>% 
   mutate(su = sum(is.na(nyc_neighborhoods.borough)))
-
 ```
