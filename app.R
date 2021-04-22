@@ -118,6 +118,34 @@ manhattan_map <- get_map(location = c(lon = -74.00, lat = 40.77), maptype = "ter
 ggmap(manhattan_map) + 
   geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
 
+#Full Data set with buroughs 
+lati<- W %>% transmute(W$lat)
+longti<- W %>% transmute(W$long)
+coor <- data.frame("lat" = lati, "long" = longti)
+coor <- coor %>% transmute(lat = W.lat, long = W.long)
+coor
+coor_spdf=coor
+coordinates(coor_spdf)<- ~long + lat
+proj4string(coor_spdf)<- proj4string(nyc_neighborhoods)
+matches <- over(coor_spdf, nyc_neighborhoods)
+coor <- cbind(coor,matches)
+points_by_neighborhood <- coor %>%
+  group_by(neighborhood) %>%
+  summarize(num_points=n())
+map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood, "neighborhood", "neighborhood")
+
+pal <- colorNumeric(palette = "RdBu",
+                    domain = range(map_data@data$num_points, na.rm=T))
+plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
+  left_join(., points_by_neighborhood, by=c("id"="neighborhood")) %>%
+  filter(!is.na(num_points))
+nyc_map <- get_map(location = c(lon = -74.00, lat = 40.78), maptype = "terrain", zoom = 11)
+ggmap(nyc_map) + 
+  geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
+fullDataSet<-coor %>% 
+  full_join(W)
+fullDataSet
+
 #Queens Borough info
 lati<- W %>% transmute(W$lat)
 longti<- W %>% transmute(W$long)
@@ -283,4 +311,5 @@ ggmap(Staten_Island_map) +
 fullStatenIslandData<-coorsi %>% 
   full_join(W)
 fullStatenIslandData
+
 
