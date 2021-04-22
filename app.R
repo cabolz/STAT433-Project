@@ -184,4 +184,103 @@ fullBrooklynData<-coorb %>%
   full_join(W)
 fullBrooklynData
 
+#Manhattan Data
+latm=W %>% 
+  transmute(W$lat)
+lonm=W %>% 
+  transmute(W$long)
+coorm <- data.frame("lat" = latm, "long" = lonm)
+coorm <- coor %>% transmute(lat = W.lat, long = W.long)
+coorm
+coor_spdfm=coorm
+coordinates(coor_spdfm)<- ~long + lat
+proj4string(coor_spdfm)<- proj4string(nyc_neighborhoods)
+matches <- over(coor_spdfm, nyc_neighborhoods)
+coorm <- cbind(coorm,matches)
+coorm
+manhattan <- coorm %>% 
+  filter(borough=="Manhattan")
+manhattan
+points_by_neighborhood <- manhattan%>% 
+  group_by(neighborhood) %>% 
+  summarize(num_points=n())
+map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood,"neighborhood", "neighborhood")
+pal <- colorNumeric(palette = "RdBu",
+                    domain = range(map_data@data$num_points, na.rm=T))
+plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
+  left_join(., points_by_neighborhood, by=c("id"="neighborhood")) %>%
+  filter(!is.na(num_points))
+Manhattan_map <- get_map(location = c(lon = -74.00, lat = 40.77), maptype = "terrain", zoom = 12)
+ggmap(Manhattan_map) + 
+  geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
+fullManhattanData<-coorm %>% 
+  full_join(W)
+fullManhattanData
+
+#Bronx borough
+latbr=W %>% 
+  transmute(W$lat)
+lonbr=W %>% 
+  transmute(W$long)
+coorbr <- data.frame("lat" = latbr, "long" = lonbr)
+coorbr <- coorbr %>% transmute(lat = W.lat, long = W.long)
+coorbr
+coor_spdfbr=coorbr
+coordinates(coor_spdfbr)<- ~long + lat
+proj4string(coor_spdfbr)<- proj4string(nyc_neighborhoods)
+matches <- over(coor_spdfbr, nyc_neighborhoods)
+coorbr <- cbind(coorbr,matches)
+coorbr
+bronx <- coorbr %>% 
+  filter(borough=="Bronx")
+bronx
+points_by_neighborhood <- bronx%>% 
+  group_by(neighborhood) %>% 
+  summarize(num_points=n())
+map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood,"neighborhood", "neighborhood")
+pal <- colorNumeric(palette = "RdBu",
+                    domain = range(map_data@data$num_points, na.rm=T))
+plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
+  left_join(., points_by_neighborhood, by=c("id"="neighborhood")) %>%
+  filter(!is.na(num_points))
+bronx_map <- get_map(location = c(lon = -73.88, lat = 40.83), maptype = "terrain", zoom = 12)
+ggmap(bronx_map) + 
+  geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
+fullBronxData<-coorbr %>% 
+  full_join(W) %>% 
+  filter(borough == 'Bronx')
+fullBronxData
+
+#Staten Island
+latsi=W %>% 
+  transmute(W$lat)
+lonsi=W %>% 
+  transmute(W$long)
+coorsi <- data.frame("lat" = latsi, "long" = lonsi)
+coorsi <- coorsi %>% transmute(lat = W.lat, long = W.long)
+coorsi
+coor_spdfsi=coorsi
+coordinates(coor_spdfsi)<- ~long + lat
+proj4string(coor_spdfsi)<- proj4string(nyc_neighborhoods)
+matches <- over(coor_spdfsi, nyc_neighborhoods)
+coorsi <- cbind(coorsi,matches)
+coorsi
+statenisland <- coorsi %>% 
+  filter(borough=="Staten Island")
+statenisland
+points_by_neighborhood <- statenisland%>% 
+  group_by(neighborhood) %>% 
+  summarize(num_points=n())
+map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood,"neighborhood", "neighborhood")
+pal <- colorNumeric(palette = "RdBu",
+                    domain = range(map_data@data$num_points, na.rm=T))
+plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
+  left_join(., points_by_neighborhood, by=c("id"="neighborhood")) %>%
+  filter(!is.na(num_points))
+Staten_Island_map<- get_map(location = c(lon = -74.15, lat = 40.58), maptype = "terrain", zoom = 12)
+ggmap(Staten_Island_map) + 
+  geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
+fullStatenIslandData<-coorsi %>% 
+  full_join(W)
+fullStatenIslandData
 
