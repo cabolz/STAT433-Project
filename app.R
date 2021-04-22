@@ -183,3 +183,5 @@ ggmap(brooklyn_map) +
 fullBrooklynData<-coorb %>% 
   full_join(W)
 fullBrooklynData
+
+
