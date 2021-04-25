@@ -312,4 +312,6 @@ fullStatenIslandData<-coorsi %>%
   full_join(W)
 fullStatenIslandData
 
+ggmap(Staten_Island_map) + 
+  geom_point(data = plot_data, aes(x=long,y=lat))
 

@@ -1,0 +1,17 @@
+---
+title: "analysis"
+output: html_document
+---
+exploring the data
+```{r}
+UberandWeather %>% 
+  group_by(SkyDesciption) %>% 
+  summarize(categories = n())
+UberandWeather %>% 
+  group_by(hour,day) %>% 
+  summarize(pickups = n())
+```
+
+```{r}
+
+```
