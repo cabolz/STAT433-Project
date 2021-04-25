@@ -54,17 +54,37 @@ JustTemp<-temp %>%
   transmute(hour,day,month,year,`New York`) %>% 
   mutate(temperature=((`New York`-273.15)*9/5)+32) %>% 
   transmute(hour,day,month,year,temperature)
+pre<- read_csv("pressure.csv")
+pressur<- pre %>% 
+  separate("datetime", into = c("Date","hour"), sep = " ") %>% 
+  separate("Date", into = c("month","day","year"), sep="/") %>% 
+  filter(year==14) %>% 
+  mutate(pressure=`New York`) %>% 
+  transmute(hour,day,month,year,pressure)
+win<- read_csv("wind_speed.csv")
+win<- win %>% 
+  separate("datetime", into = c("Date","hour"), sep = " ") %>% 
+  separate("Date", into = c("month","day","year"), sep="/") %>% 
+  filter(year==14) %>% 
+  mutate(windspeed=`New York`) %>% 
+  transmute(hour,day,month,year,windspeed)
 d<-full_join(Humidityin2014,JustNewYorkSky)
-weatherData<-full_join(d,JustTemp) %>% 
+temporary<- full_join(win,pressur) %>% 
+  full_join(d)
+weatherData<-full_join(temporary,JustTemp) %>% 
   separate(hour,into = c("hour"),sep = ":")
+weatherData<- weatherData %>%  
+  transmute(hour,day,month,windspeed,pressure,Humidity,SkyDesciption,temperature)
+weatherData
 ```
 
 Uber and Weather together
 ```{r warning=FALSE}
-UberandWeather<-uberDataSet %>% 
+UberandWeather<-brokenUp2 %>% 
   full_join(weatherData) 
-UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature"))
+UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature", "pressure","windspeed"))
 UberandWeather <- na.omit(UberandWeather)
+UberandWeather
 ```
 
 

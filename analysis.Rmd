@@ -5,7 +5,7 @@ output: html_document
 exploring the data
 ```{r}
 fullSet<- read_csv("UberWeatherBorough.csv")
-fullSet %>% 
+fullData %>% 
   group_by(SkyDesciption) %>% 
   summarize(categories = n())
 fullSet %>% 
@@ -15,5 +15,45 @@ View(fullSet)
 ```
 
 ```{r}
+Y<-fullData %>% 
+  group_by(hour) %>% 
+  summarize(pickup = n(),Humidity,temperature,pressure,windspeed) %>% 
+  ungroup
+Y
+table<-write.table(Y)
+lin<-lm(pickup~Humidity+temperature+pressure+windspeed,data = Y)
+summary(lin)
+pairs(Y, pch=12)
+pair(Y,)
+plot(data= Y,Y$pickup~.) %>% 
+  abline(lin)
+
+library(leaps)
+
+myLeaps<- regsubsets(pickup~Humidity+temperature+pressure+windspeed,data = Y,nbest = 4)
+  (myLeaps.summary<- summary(myLeaps))
+
+bettertable<- cbind(myLeaps.summary$which,
+                    myLeaps.summary$rsq, myLeaps.summary$rss,
+                    myLeaps.summary$adjr2,myLeaps.summary$cp, myLeaps.summary$bic)
+dimnames(bettertable)[[2]]<- c(dimnames(myLeaps.summary$which)[[2]],
+                               "R2","SSE","R2_(adj)","cp","BIC")
+bettertable=round(bettertable,3)
+bettertable
+n=dim(Y)[1]
+fit0<- lm(pickup~1, data=Y)
+fitall<- lm(pickup~Humidity+temperature+pressure+windspeed, data=Y)
+
+m1<-step(fit0,fitall,direction = "forward", k=log(n))
+summary(m1)
+m2<-step(fitall,direction="backward",k=log(n))
+summary(m2)
+m3<-step(fitall,direction="both",k=log(n))
+summary(m3)
+library(DAAG)
+m1<- "pickup~Humidity+temperature+pressure"
+m2<- "pickup~1"
+model1cv=CVlm(data = Y, form.lm = formula(m1), m=8, seed=7,plotit=F)
+model2cv=CVlm(data = Y, form.lm = formula(m2),m=8,seed=7,plotit = F)
 
 ```
