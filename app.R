@@ -148,6 +148,8 @@ coor1<- data.frame(coor$lat,coor$long,coor$neighborhood,coor$boroughCode,coor$bo
 coor2<- coor1 %>% 
   transmute(Lat = coor.lat,Lon = coor.long,neighborhood = coor.neighborhood, boroughCode = coor.boroughCode,
             borough = coor.borough)
+coor2<- coor2 %>% 
+  transmute(hour,minute,Lat,Lon,day,Humidity,Skydesciption,temperature,pressure,windspeed,neighborhood,borough)
 View(coor2)
 coor2<- na.omit(coor2)
 fullData<- UberandWeather %>% 
