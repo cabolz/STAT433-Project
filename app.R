@@ -129,6 +129,7 @@ coordinates(coor_spdf)<- ~long + lat
 proj4string(coor_spdf)<- proj4string(nyc_neighborhoods)
 matches <- over(coor_spdf, nyc_neighborhoods)
 coor <- cbind(coor,matches)
+coor
 points_by_neighborhood <- coor %>%
   group_by(neighborhood) %>%
   summarize(num_points=n())
@@ -142,9 +143,28 @@ plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
 nyc_map <- get_map(location = c(lon = -74.00, lat = 40.78), maptype = "terrain", zoom = 11)
 ggmap(nyc_map) + 
   geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
-fullDataSet<-coor %>% 
-  full_join(W)
-fullDataSet
+W
+coor1<- data.frame(coor$lat,coor$long,coor$neighborhood,coor$boroughCode,coor$borough)
+coor2<- coor1 %>% 
+  transmute(Lat = coor.lat,Lon = coor.long,neighborhood = coor.neighborhood, boroughCode = coor.boroughCode,
+            borough = coor.borough)
+View(coor2)
+coor2<- na.omit(coor2)
+fullData<- UberandWeather %>% 
+  right_join(coor2)
+View(fullData)
+View(UberandWeather)
+View(coor2)
+fullData<- distinct(fullData)
+fullData
+weekdays(as.Date('16-08-2012','%d-%m-%Y'))
+full<- data.frame(fullData$day,fullData$month,14)
+View(full)
+fullData<- fullData %>% 
+  mutate(dayOfTheWeek = weekdays(as.Date(brokenUp3$Date,'%d/%m/%Y')))
+fullData
+write_csv(fullData,"UberWeatherBorough.csv")
+tester<- read_csv("UberWeatherBorough.csv")
 
 #Queens Borough info
 lati<- W %>% transmute(W$lat)
