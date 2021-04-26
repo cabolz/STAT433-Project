@@ -161,3 +161,7 @@ countryandBorough<-slender %>%
 countyAndBorough %>% 
   mutate(su = sum(is.na(nyc_neighborhoods.borough)))
 ```
+
+```{r}
+
+```

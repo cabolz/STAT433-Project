@@ -15,18 +15,18 @@ View(fullSet)
 ```
 
 ```{r}
+a<-c(1,2,3,4,5)
+a<-as.double(a)
+a
 Y<-fullData %>% 
   group_by(hour) %>% 
-  summarize(pickup = n(),Humidity,temperature,pressure,windspeed) %>% 
-  ungroup
+  summarize(pickup = n(),Humidity,temperature,pressure,windspeed) %>%
+  mutate(hours = as.double(hour)) %>% 
+  ungroup %>% 
+  transmute(hours,windspeed,pressure,temperature,Humidity)
 Y
-table<-write.table(Y)
 lin<-lm(pickup~Humidity+temperature+pressure+windspeed,data = Y)
 summary(lin)
-pairs(Y, pch=12)
-pair(Y,)
-plot(data= Y,Y$pickup~.) %>% 
-  abline(lin)
 
 library(leaps)
 
@@ -56,4 +56,25 @@ m2<- "pickup~1"
 model1cv=CVlm(data = Y, form.lm = formula(m1), m=8, seed=7,plotit=F)
 model2cv=CVlm(data = Y, form.lm = formula(m2),m=8,seed=7,plotit = F)
 
+#PCA first check for multicollinearity
+pairs(Y)
+plot(Y$hour,Y$temperature)
+plot()
+pairs(iris[1:4], main = "Anderson's Iris Data -- 3 species",
+      pch = 21, bg = c("red", "green3", "blue")[unclass(iris$Species)])
+cor(Y)
+
+fullData<- fullData %>% 
+  mutate(boroughCode = as.double(boroughCode)) %>% 
+  mutate(hour = as.double(hour)) %>% 
+  mutate(minute = as.double(minute)) %>% 
+  mutate(month = as.double(month)) %>% 
+  mutate(day = as.double(day)) %>% 
+  group_by(hour) %>% 
+  mutate(pickup = n()) %>% 
+  mutate(pickup = as.double(pickup))
+fullData
+byNeighborhood<- fullData %>% 
+  group_by(neighborhood)
+byNeighborhood
 ```
