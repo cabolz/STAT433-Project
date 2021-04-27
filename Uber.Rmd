@@ -109,21 +109,6 @@ SkyDescription = 0
 temperature = 0
 
 
-Trying to get the NYC map
-```{r}
-library(tigris)
-library(dplyr)
-library(leaflet)
-library(sp)
-library(ggmap)
-library(maptools)
-library(broom)
-library(httr)
-library(rgdal)
-leaflet() %>%
-  addTiles() %>%
-  setView(-74.00, 40.71, zoom = 12)
-```
 
 ```{r}
 library(ggplot2)
@@ -144,24 +129,8 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
 ```
 Trying to put these datasets together
 ```{r}
-tail(UberandWeather)
-View(UberandWeather)
 W<-UberandWeather %>% 
   mutate(long = round(Lon,4)) %>% 
   mutate(lat = round(Lat,4))
 tail(W)
-byCounty<- slender %>% #this finally works
-  right_join(W)
-byCounty
-char<-c(0:309)
-nyc_neighborhoods$id=as.character(char)
-slender
-countryandBorough<-slender %>% 
-  right_join(W)
-countyAndBorough %>% 
-  mutate(su = sum(is.na(nyc_neighborhoods.borough)))
-```
-
-```{r}
-
 ```
