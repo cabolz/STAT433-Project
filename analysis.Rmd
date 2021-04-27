@@ -4,10 +4,8 @@ output: html_document
 ---
 exploring the data
 ```{r}
-fullSet<- read_csv("UberWeatherBorough.csv")
-fullData %>% 
-  group_by(SkyDesciption) %>% 
-  summarize(categories = n())
+fullData<- na.omit(fullData)
+fullData
 fullSet %>% 
   group_by(hour,day) %>% 
   summarize(pickups = n())
