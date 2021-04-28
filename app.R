@@ -50,9 +50,9 @@ server <- function(input, output) {
     
     # Remove ability to pan and zoom, set plot dimensions
     ggplotly(plot, width = 700, tooltip = c("County", "Species", "Density")) %>% 
-      config(displayModeBar = FALSE) %>% 
-      layout(xaxis=list(fixedrange=TRUE),
-             yaxis=list(fixedrange=TRUE))
+      config(displayModeBar = T) %>% 
+      layout(xaxis=list(fixedrange=F),
+             yaxis=list(fixedrange=F))
   })
   
   
