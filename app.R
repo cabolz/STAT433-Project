@@ -8,6 +8,7 @@ library(broom)
 library(httr)
 library(rgdal)
 library(shiny)
+library(plotly)
 
 #uber app
 borough<- c("NYC","Manhattan","Brooklyn","Queens","Bronx","Staten Island")
@@ -21,12 +22,13 @@ ui <- fluidPage(
       helpText("data from NYC Taxi & Limousine Commission"),
       sliderInput("range","May 2014",value=c(1,31),min=1,max=31),
       selectInput("var","Which borough would you like to see?",borough)),
-    mainPanel(plotOutput("map")))
+    mainPanel(plotOutput("map"))),
+  plotlyOutput(outputId = "map")
 )
 
 
-server <- function(input, output, session) {
-  output$map<- renderPlot({
+server <- function(input, output) {
+  output$map<- renderPlotly({
     data<- switch(input$var,
                   "NYC" = fullData %>% 
                     filter(day%in%c(input$range[1]:input$range[2])),
@@ -45,7 +47,8 @@ server <- function(input, output, session) {
                   "Staten Island" = fullData%>% 
                     filter(borough=="Staten Island") %>% 
                     filter(day%in%c(input$range[1]:input$range[2])))
-    print(data)
+    
+    plot = ggmap()
   })
 }
 
