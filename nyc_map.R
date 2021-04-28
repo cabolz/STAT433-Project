@@ -100,12 +100,15 @@ points_by_neighborhood <- coor %>%
   group_by(neighborhood) %>%
   summarize(num_points=n())
 map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood, "neighborhood", "neighborhood")
-
+?colorNumeric
 pal <- colorNumeric(palette = "RdBu",
                     domain = range(map_data@data$num_points, na.rm=T))
 plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
   left_join(., points_by_neighborhood, by=c("id"="neighborhood")) %>%
   filter(!is.na(num_points))
+nyc_map <- get_map(location = c(lon = -73.99, lat = 40.74), maptype = "terrain", zoom = 11)
+wholeNYC<- ggmap(nyc_map) + 
+  geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=log(num_points)), alpha=0.75)
 coor1<- data.frame(coor$lat,coor$long,coor$neighborhood,coor$boroughCode,coor$borough)
 coor2<- coor1 %>% 
   transmute(Lat = coor.lat,Lon = coor.long,neighborhood = coor.neighborhood, boroughCode = coor.boroughCode,
@@ -122,7 +125,7 @@ fullData
 View(fullData)
 fullData<- distinct(fullData)
 fullData
-
+wholeNYC
 
 #Queens Borough info
 lati<- W %>% transmute(W$lat)
