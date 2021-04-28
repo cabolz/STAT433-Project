@@ -4,6 +4,12 @@ output: html_document
 ---
 exploring the data
 ```{r}
+library(readr)
+fullData = read_csv("fulldata.csv")
+```
+
+
+```{r}
 fullData<- na.omit(fullData)
 fullData
 fullSet %>% 
