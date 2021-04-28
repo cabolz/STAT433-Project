@@ -1,23 +1,29 @@
-library(tigris)
 library(dplyr)
-library(leaflet)
-library(sp)
-library(ggmap)
-library(maptools)
-library(broom)
-library(httr)
-library(rgdal)
 library(shiny)
 library(plotly)
+library(readr)
+library(ggplot2)
+library(stringr)
 
 #uber app
 borough<- c("NYC","Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 fullData<- read_csv("fullData.csv")
 fullData %>% filter(day%in%c(1:31))
 
-register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
+#register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
 
-source("helper.R")
+# Get lat/long coordinates for NY counties
+choropleth = map_data("county") %>% 
+  filter(region == "new york") %>% 
+  select(-group, -order, - region) %>% 
+  rename(County = subregion) %>% 
+  mutate(County = str_to_title(County)) %>% 
+  filter(County == "New York" | County == "Kings" | County == "Queens" | 
+           County == "Bronx" | County == "Richmond")
+
+# brooklyn = kings
+# manhattan = new york
+# Staten Island = Richmond
 
 ui <- fluidPage(
   titlePanel("NYC Uber Pickup"),
@@ -27,40 +33,57 @@ ui <- fluidPage(
       sliderInput("range","May 2014",value=c(1,31),min=1,max=31),
       selectInput("var","Which borough would you like to see?",borough)),
     mainPanel(plotOutput("map"))),
-  plotlyOutput(outputId = "map")
+  plotlyOutput(outputId = "countyChoropleth")
 )
 
 
 server <- function(input, output) {
-  output$map<- renderPlotly({
-    data<- switch(input$var,
-                  "NYC" = fullData %>% 
-                    filter(day%in%c(input$range[1]:input$range[2])),
-                  "Manhattan" = fullData%>% 
-                    filter(borough=="Manhattan") %>% 
-                    filter(day%in%c(input$range[1]:input$range[2])),
-                  "Brooklyn" = fullData%>% 
-                    filter(borough=="Brooklyn") %>% 
-                    filter(day%in%c(input$range[1]:input$range[2])),
-                  "Queens" = fullData%>% 
-                    filter(borough=="Queens") %>% 
-                    filter(day%in%c(input$range[1]:input$range[2])),
-                  "Bronx" = fullData%>% 
-                    filter(borough=="Bronx") %>% 
-                    filter(day%in%c(input$range[1]:input$range[2])),
-                  "Staten Island" = fullData%>% 
-                    filter(borough=="Staten Island") %>% 
-                    filter(day%in%c(input$range[1]:input$range[2])))
+  output$countyChoropleth <- renderPlotly({
     
-    plot = ggmap(get_map(location = c(lon = -73.99, lat = 40.74), maptype = "terrain", zoom = 11))
+    plot = ggplot(choropleth, aes(long, lat, group = County)) +
+      geom_polygon(aes(), colour = alpha("black", 1/2), size = 0.1)  +
+      labs (
+        title = "Number of Species by County",
+        fill = "Number of Species"
+      ) +
+      theme(
+        panel.background = element_rect(fill = "#FFFFFF"),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()
+      ) +
+      scale_fill_viridis_c(option = "magma", limits = c(50, 200))
     
-    ggplotly(plot, width = 500) %>% 
-      config(displayModeBar = T) %>% 
-      layout(xaxis=list(fixedrange=F),
-             yaxis=list(fixedrange=F))
-    
-    })
+    # Remove ability to pan and zoom, set plot dimensions
+    ggplotly(plot, width = 700, tooltip = c("County", "Species", "Density")) %>% 
+      config(displayModeBar = FALSE) %>% 
+      layout(xaxis=list(fixedrange=TRUE),
+             yaxis=list(fixedrange=TRUE))
+  })
+  
+  
 }
 
 shinyApp(ui, server)
 
+# data<- switch(input$var,
+#               "NYC" = fullData %>% 
+#                 filter(day%in%c(input$range[1]:input$range[2])),
+#               "Manhattan" = fullData%>% 
+#                 filter(borough=="Manhattan") %>% 
+#                 filter(day%in%c(input$range[1]:input$range[2])),
+#               "Brooklyn" = fullData%>% 
+#                 filter(borough=="Brooklyn") %>% 
+#                 filter(day%in%c(input$range[1]:input$range[2])),
+#               "Queens" = fullData%>% 
+#                 filter(borough=="Queens") %>% 
+#                 filter(day%in%c(input$range[1]:input$range[2])),
+#               "Bronx" = fullData%>% 
+#                 filter(borough=="Bronx") %>% 
+#                 filter(day%in%c(input$range[1]:input$range[2])),
+#               "Staten Island" = fullData%>% 
+#                 filter(borough=="Staten Island") %>% 
+#                 filter(day%in%c(input$range[1]:input$range[2])))
+# 
