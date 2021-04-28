@@ -2,17 +2,20 @@
 title: "analysis"
 output: html_document
 ---
-exploring the data
+
 ```{r}
 library(readr)
-fullData = read_csv("fulldata.csv")
+library(leaps)
 ```
 
+```{r}
+fullData = read_csv("fulldata.csv")
+```
 
 ```{r}
 fullData<- na.omit(fullData)
 fullData
-fullSet %>% 
+fullSet = fullData %>% 
   group_by(hour,day) %>% 
   summarize(pickups = n())
 View(fullSet)
@@ -32,7 +35,7 @@ Y
 lin<-lm(pickup~Humidity+temperature+pressure+windspeed,data = Y)
 summary(lin)
 
-library(leaps)
+
 
 myLeaps<- regsubsets(pickup~Humidity+temperature+pressure+windspeed,data = Y,nbest = 4)
   (myLeaps.summary<- summary(myLeaps))
