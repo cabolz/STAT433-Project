@@ -7,8 +7,6 @@ library(stringr)
 
 borough<- c("Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 fullData<- read_csv("fullData.csv")
-fullData<- fullData %>% mutate(counties = boroughCode)
-
 
 fullData = fullData %>%
   mutate( 
@@ -46,7 +44,8 @@ server <- function(input, output) {
   output$countyChoropleth <- renderPlotly({
     
     plot = ggplot(choropleth, aes(long, lat, group = County)) +
-      geom_polygon(aes(), colour = alpha("black", 1/2), size = 0.1)  +
+      geom_polygon(aes(fill = County), colour = alpha("black", 1/2), size = 0.1)  +
+      
       labs (
         title = "Number of Species by County") +
       theme(
@@ -56,8 +55,7 @@ server <- function(input, output) {
         axis.text = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
-      ) +
-      scale_fill_viridis_c(option = "magma", limits = c(50, 200))
+      ) 
     
     # Remove ability to pan and zoom, set plot dimensions
     ggplotly(plot, width = 700, tooltip = c("County", "Species", "Density")) %>% 
