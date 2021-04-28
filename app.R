@@ -6,7 +6,7 @@ library(ggplot2)
 library(stringr)
 
 #uber app
-# borough<- c("NYC","Manhattan","Brooklyn","Queens","Bronx","Staten Island")
+borough<- c("New York", "Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 fullData<- read_csv("fullData.csv")
 fullData %>% filter(day%in%c(1:31))
 
