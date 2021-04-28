@@ -95,12 +95,10 @@ coordinates(coor_spdf)<- ~long + lat
 proj4string(coor_spdf)<- proj4string(nyc_neighborhoods)
 matches <- over(coor_spdf, nyc_neighborhoods)
 coor <- cbind(coor,matches)
-head(coor)
 points_by_neighborhood <- coor %>%
   group_by(neighborhood) %>%
   summarize(num_points=n())
 map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood, "neighborhood", "neighborhood")
-?colorNumeric
 pal <- colorNumeric(palette = "RdBu",
                     domain = range(map_data@data$num_points, na.rm=T))
 plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
@@ -108,23 +106,29 @@ plot_data <- tidy(nyc_neighborhoods, region="neighborhood") %>%
   filter(!is.na(num_points))
 nyc_map <- get_map(location = c(lon = -73.99, lat = 40.74), maptype = "terrain", zoom = 11)
 wholeNYC<- ggmap(nyc_map) + 
-  geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=log(num_points)), alpha=0.75)
+  geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
+View(coor)
 coor1<- data.frame(coor$lat,coor$long,coor$neighborhood,coor$boroughCode,coor$borough)
+View(coor1)
 coor2<- coor1 %>% 
   transmute(Lat = coor.lat,Lon = coor.long,neighborhood = coor.neighborhood, boroughCode = coor.boroughCode,
             borough = coor.borough)
-coor2
+View(coor2)
+dataTogether<- coor2 %>% 
+  left_join(W)
+View(dataTogether)
 coor2<- coor2 %>% 
-  transmute(hour,minute,Lat,Lon,day,Humidity,Skydesciption,temperature,pressure,windspeed,neighborhood,borough)
+  transmute(hour,minute,Lat,Lon,day,Humidity,Skydesciption,temperature,pressure,windspeed,neighborhood,borough) %>% 
+  na.omit(coor2)
 View(coor2)
 coor2<- na.omit(coor2)
 fullData<- UberandWeather %>% 
-  right_join(coor2) %>% 
-  right_join(nyc_neighborhoods_df$id)
+  right_join(coor2) 
 fullData
 View(fullData)
 fullData<- distinct(fullData)
 fullData
+
 wholeNYC
 
 #Queens Borough info

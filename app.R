@@ -28,15 +28,15 @@ server <- function(input, output, session) {
   output$map<- renderPlot({
     data<- switch(input$var,
                   "NYC" = fullData,
-                  "Manhattan" = fullData%>% filter(borough=="Manhattan"),
+                  "Manhattan" = fullData%>% 
+                    filter(borough=="Manhattan") %>% 
+                    filter(fullData$day>=input$range[1]&&fullData$day<=input$range[2]),
                   "Brooklyn" = fullData%>% filter(borough=="Brooklyn"),
                   "Queens" = fullData%>% filter(borough=="Queens"),
                   "Bronx" = fullData%>% filter(borough=="Bronx"),
                   "Staten Island" = fullData%>% filter(borough=="Staten Island"))
-  View(fullData)
   })
 }
-
 
 shinyApp(ui, server)
 
