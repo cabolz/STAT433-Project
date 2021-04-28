@@ -30,13 +30,14 @@ Y<-fullData %>%
   summarize(pickup = n(),Humidity,temperature,pressure,windspeed) %>%
   mutate(hours = as.double(hour)) %>% 
   ungroup %>% 
-  transmute(hours,windspeed,pressure,temperature,Humidity)
+  transmute(pickup, hours,windspeed,pressure,temperature,Humidity)
 Y
-lin<-lm(pickup~Humidity+temperature+pressure+windspeed,data = Y)
+lin<-lm(pickup~.,data = Y)
 summary(lin)
+```
 
 
-
+```{r}
 myLeaps<- regsubsets(pickup~Humidity+temperature+pressure+windspeed,data = Y,nbest = 4)
   (myLeaps.summary<- summary(myLeaps))
 
@@ -50,7 +51,10 @@ bettertable
 n=dim(Y)[1]
 fit0<- lm(pickup~1, data=Y)
 fitall<- lm(pickup~Humidity+temperature+pressure+windspeed, data=Y)
+```
 
+
+```{r}
 m1<-step(fit0,fitall,direction = "forward", k=log(n))
 summary(m1)
 m2<-step(fitall,direction="backward",k=log(n))
@@ -62,15 +66,20 @@ m1<- "pickup~Humidity+temperature+pressure"
 m2<- "pickup~1"
 model1cv=CVlm(data = Y, form.lm = formula(m1), m=8, seed=7,plotit=F)
 model2cv=CVlm(data = Y, form.lm = formula(m2),m=8,seed=7,plotit = F)
+```
 
-#PCA first check for multicollinearity
+# PCA first check for multicollinearity
+```{r}
 pairs(Y)
 plot(Y$hour,Y$temperature)
 plot()
 pairs(iris[1:4], main = "Anderson's Iris Data -- 3 species",
       pch = 21, bg = c("red", "green3", "blue")[unclass(iris$Species)])
 cor(Y)
+```
 
+
+```{r}
 fullData<- fullData %>% 
   mutate(boroughCode = as.double(boroughCode)) %>% 
   mutate(hour = as.double(hour)) %>% 
