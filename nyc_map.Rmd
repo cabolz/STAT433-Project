@@ -147,17 +147,15 @@ ggmap(queens_map) +
 
 # Full Data set with buroughs 
 ```{r}
-lati<- W %>% transmute(W$lat)
+lati<- UberandWeather %>% transmute(UberandWeather$Lat)
 
-longti<- W %>% transmute(W$long)
+longti<- UberandWeather %>% transmute(UberandWeather$Lon)
 
 coor <- data.frame("lat" = lati, "long" = longti)
 
-coor <- coor %>% transmute(lat = W.lat, long = W.long)
-
 coor_spdf=coor
 
-coordinates(coor_spdf)<- ~long + lat
+coordinates(coor_spdf)<- ~UberandWeather.Lon + UberandWeather.Lat
 
 proj4string(coor_spdf)<- proj4string(nyc_neighborhoods)
 
@@ -182,19 +180,13 @@ nyc_map <- get_map(location = c(lon = -73.99, lat = 40.74), maptype = "terrain",
 
 wholeNYC<- ggmap(nyc_map) + 
   geom_polygon(data=plot_data, aes(x=long, y=lat, group=group, fill=num_points), alpha=0.75)
-
-coor1<- data.frame(coor$lat,coor$long,coor$neighborhood,coor$boroughCode,coor$borough)
-
+coor
+coor1<- data.frame(coor$UberandWeather.Lat,coor$UberandWeather.Lon,coor$neighborhood,coor$boroughCode,coor$borough)
+View(coor1)
 coor2<- coor1 %>% 
-  transmute(Lat = coor.lat,Lon = coor.long,neighborhood = coor.neighborhood, boroughCode = coor.boroughCode,
+  transmute(Lat = coor.UberandWeather.Lat,Lon = coor.UberandWeather.Lon,neighborhood = coor.neighborhood, boroughCode = coor.boroughCode,
             borough = coor.borough)
-
-dataTogether<- coor2 %>% 
-  left_join(W)
-
-coor2<- coor2 %>% 
-  transmute(hour,minute,Lat,Lon,day,Humidity,Skydesciption,temperature,pressure,windspeed,neighborhood,borough) %>% 
-  na.omit(coor2)
+View(coor2)
 
 coor2<- na.omit(coor2)
 
@@ -202,6 +194,8 @@ fullData<- UberandWeather %>%
   right_join(coor2) 
 
 fullData<- distinct(fullData)
+
+write_csv(fullData,"fullData.csv")
 ```
 
 # Queens Borough info
