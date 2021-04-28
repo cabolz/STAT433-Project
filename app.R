@@ -8,6 +8,10 @@ library(stringr)
 #uber app
 borough<- c("New York", "Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 fullData<- read_csv("fullData.csv")
+fullData<- fullData %>% mutate(counties = boroughCode)
+View(fullData)
+tempor<- with(fullData,replace(fullData$counties, fullData$counties==1,"New York"),replace(fullData$counties, fullData$counties==3,"Brooklyn"))
+tempor
 fullData %>% filter(day%in%c(1:31))
 
 # register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
