@@ -55,9 +55,9 @@ server <- function(input, output) {
     plot = ggmap(get_map(location = c(lon = -73.99, lat = 40.74), maptype = "terrain", zoom = 11))
     
     ggplotly(plot, width = 500) %>% 
-      config(displayModeBar = FALSE) %>% 
-      layout(xaxis=list(fixedrange=TRUE),
-             yaxis=list(fixedrange=TRUE))
+      config(displayModeBar = T) %>% 
+      layout(xaxis=list(fixedrange=F),
+             yaxis=list(fixedrange=F))
     
     })
 }
