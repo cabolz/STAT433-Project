@@ -14,7 +14,11 @@ library(plotly)
 borough<- c("NYC","Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 fullData<- read_csv("fullData.csv")
 fullData %>% filter(day%in%c(1:31))
+
+register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
+
 source("helper.R")
+
 ui <- fluidPage(
   titlePanel("NYC Uber Pickup"),
   sidebarLayout(
@@ -48,8 +52,14 @@ server <- function(input, output) {
                     filter(borough=="Staten Island") %>% 
                     filter(day%in%c(input$range[1]:input$range[2])))
     
-    plot = ggmap()
-  })
+    plot = ggmap(get_map(location = c(lon = -73.99, lat = 40.74), maptype = "terrain", zoom = 11))
+    
+    ggplotly(plot, width = 500) %>% 
+      config(displayModeBar = FALSE) %>% 
+      layout(xaxis=list(fixedrange=TRUE),
+             yaxis=list(fixedrange=TRUE))
+    
+    })
 }
 
 shinyApp(ui, server)
