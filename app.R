@@ -18,9 +18,8 @@ ui <- fluidPage(
     sidebarPanel(
     helpText("data from NYC Taxi & Limousine Commission"),
     sliderInput("rng","May 2014",value=c(1,31),min=1,max=31),
-    selectInput("var","Which borough would you like to see?",borough))
-  ),
-  mainPanel(plotOutput("map"))
+    selectInput("var","Which borough would you like to see?",borough)),
+  mainPanel(plotOutput("map")))
 )
 
 

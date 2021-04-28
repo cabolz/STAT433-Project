@@ -1,4 +1,5 @@
-
+library(ggmap)
+library(readr)
 
 nyc_map <- get_map(location = c(lon = -73.99, lat = 40.74), maptype = "terrain", zoom = 11)
 ggmap(nyc_map)
@@ -44,7 +45,10 @@ bronx_map <- get_map(location = c(lon = -73.88, lat = 40.83), maptype = "terrain
 ggmap(bronx_map)
 queens_map <- get_map(location = c(lon = -73.81, lat = 40.72), maptype = "terrain", zoom = 11)
 ggmap(queens_map)
+
+UberandWeather = read_csv("UberandWeather.csv")
 UberandWeather
+
 nyc_neighborhoods_df
 justCountyandBurough<-data.frame(nyc_neighborhoods$neighborhood,nyc_neighborhoods$boroughCode,nyc_neighborhoods$borough,nyc_neighborhoods$id)
 justCountyandBurough<-mutate(justCountyandBurough,id = nyc_neighborhoods.id)
