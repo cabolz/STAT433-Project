@@ -20,7 +20,7 @@ fullData = fullData %>%
       str_detect(borough, "Bronx") ~ paste("Bronx")))
 
 fullData %>% filter(day%in%c(1:31))
-
+View(fullData)
 # register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
 
 # Get lat/long coordinates for NY counties
@@ -48,7 +48,7 @@ server <- function(input, output) {
     plot = ggplot(choropleth, aes(long, lat, group = County)) +
       geom_polygon(aes(), colour = alpha("black", 1/2), size = 0.1)  +
       labs (
-        title = "Number of Species by County") +
+        title = "Number of Uber Pickups by County") +
       theme(
         panel.background = element_rect(fill = "#FFFFFF"),
         panel.grid = element_blank(),
