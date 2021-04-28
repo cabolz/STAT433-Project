@@ -6,11 +6,11 @@ library(ggplot2)
 library(stringr)
 
 #uber app
-borough<- c("NYC","Manhattan","Brooklyn","Queens","Bronx","Staten Island")
+# borough<- c("NYC","Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 fullData<- read_csv("fullData.csv")
 fullData %>% filter(day%in%c(1:31))
 
-#register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
+# register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
 
 # Get lat/long coordinates for NY counties
 choropleth = map_data("county") %>% 
@@ -21,10 +21,6 @@ choropleth = map_data("county") %>%
   filter(County == "New York" | County == "Kings" | County == "Queens" | 
            County == "Bronx" | County == "Richmond")
 
-# brooklyn = kings
-# manhattan = new york
-# Staten Island = Richmond
-
 ui <- fluidPage(
   titlePanel("NYC Uber Pickup"),
   sidebarLayout(
@@ -32,10 +28,8 @@ ui <- fluidPage(
       helpText("data from NYC Taxi & Limousine Commission"),
       sliderInput("range","May 2014",value=c(1,31),min=1,max=31),
       selectInput("var","Which borough would you like to see?",borough)),
-    mainPanel(plotOutput("map"))),
-  plotlyOutput(outputId = "countyChoropleth")
+    mainPanel(plotlyOutput(outputId = "countyChoropleth")))
 )
-
 
 server <- function(input, output) {
   output$countyChoropleth <- renderPlotly({
@@ -43,9 +37,7 @@ server <- function(input, output) {
     plot = ggplot(choropleth, aes(long, lat, group = County)) +
       geom_polygon(aes(), colour = alpha("black", 1/2), size = 0.1)  +
       labs (
-        title = "Number of Species by County",
-        fill = "Number of Species"
-      ) +
+        title = "Number of Species by County") +
       theme(
         panel.background = element_rect(fill = "#FFFFFF"),
         panel.grid = element_blank(),
