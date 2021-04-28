@@ -6,6 +6,7 @@ output: html_document
 ```{r}
 library(readr)
 library(leaps)
+library(DAAG)
 ```
 
 ```{r}
@@ -61,7 +62,10 @@ m2<-step(fitall,direction="backward",k=log(n))
 summary(m2)
 m3<-step(fitall,direction="both",k=log(n))
 summary(m3)
-library(DAAG)
+```
+
+
+```{r}
 m1<- "pickup~Humidity+temperature+pressure"
 m2<- "pickup~1"
 model1cv=CVlm(data = Y, form.lm = formula(m1), m=8, seed=7,plotit=F)
