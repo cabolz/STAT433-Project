@@ -11,6 +11,8 @@ library(shiny)
 
 #uber app
 borough<- c("NYC","Manhattan","Brooklyn","Queens","Bronx","Staten Island")
+fullData<- read_csv("fullData.csv")
+fullData %>% filter(day%in%c(1:31))
 source("helper.R")
 ui <- fluidPage(
   titlePanel("NYC Uber Pickup"),
@@ -27,28 +29,27 @@ server <- function(input, output, session) {
   output$map<- renderPlot({
     data<- switch(input$var,
                   "NYC" = fullData %>% 
-                    filter(fullData$day>=input$range[1]&&fullData$range<=input$range[2]),
+                    filter(day%in%c(input$range[1]:input$range[2])),
                   "Manhattan" = fullData%>% 
                     filter(borough=="Manhattan") %>% 
-                    filter(fullData$day>=input$range[1]&&fullData$day<=input$range[2]),
+                    filter(day%in%c(input$range[1]:input$range[2])),
                   "Brooklyn" = fullData%>% 
                     filter(borough=="Brooklyn") %>% 
-                    filter(fullData$day>=input$range[1]&&fullData$day<=input$range[2]),
+                    filter(day%in%c(input$range[1]:input$range[2])),
                   "Queens" = fullData%>% 
                     filter(borough=="Queens") %>% 
-                    filter(fullData$day>=input$range[1]&&fullData$day<=input$range[2]),
+                    filter(day%in%c(input$range[1]:input$range[2])),
                   "Bronx" = fullData%>% 
                     filter(borough=="Bronx") %>% 
-                    filter(fullData$day>=input$range[1]&&fullData$day<=input$range[2]),
+                    filter(day%in%c(input$range[1]:input$range[2])),
                   "Staten Island" = fullData%>% 
                     filter(borough=="Staten Island") %>% 
-                    filter(fullData$day>=input$range[1]&&fullData$day<=input$range[2]))
+                    filter(day%in%c(input$range[1]:input$range[2])))
     print(data)
   })
 }
 
 shinyApp(ui, server)
-
 
 # Define UI for slider demo app ----
 ui <- fluidPage(
