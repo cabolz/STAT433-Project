@@ -7,7 +7,7 @@ library(stringr)
 
 borough<- c("Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 fullData<- read_csv("fullData.csv")
-
+View(fullData)
 fullData = fullData %>%
   mutate( 
     borough = case_when(
@@ -18,7 +18,7 @@ fullData = fullData %>%
       str_detect(borough, "Bronx") ~ paste("Bronx")))
 
 fullData %>% filter(day%in%c(1:31))
-View(fullData)
+write_csv(fullData,"fullData.csv")
 # register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
 
 # Get lat/long coordinates for NY counties

@@ -14,8 +14,6 @@ fullData = read_csv("fulldata.csv")
 ```
 
 ```{r}
-fullData<- na.omit(fullData)
-fullData
 fullSet = fullData %>% 
   group_by(hour,day) %>% 
   summarize(pickups = n())
@@ -23,9 +21,6 @@ View(fullSet)
 ```
 
 ```{r}
-a<-c(1,2,3,4,5)
-a<-as.double(a)
-a
 Y<-fullData %>% 
   group_by(hour) %>% 
   summarize(pickup = n(),Humidity,temperature,pressure,windspeed) %>%
@@ -74,6 +69,14 @@ model2cv=CVlm(data = Y, form.lm = formula(m2),m=8,seed=7,plotit = F)
 
 # PCA first check for multicollinearity
 ```{r}
+fullData
+PCRfactors = fullData %>% 
+  transmute(hour,day,Lat,Lon,Humidity,temperature,pressure,windspeed)
+pairs(PCRfactors)
+cor(PCRfactors)
+
+library(olsrr)
+ols_vif_tol()
 pairs(Y)
 plot(Y$hour,Y$temperature)
 plot()
