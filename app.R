@@ -5,13 +5,20 @@ library(readr)
 library(ggplot2)
 library(stringr)
 
-#uber app
-borough<- c("New York", "Manhattan","Brooklyn","Queens","Bronx","Staten Island")
+borough<- c("Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 fullData<- read_csv("fullData.csv")
 fullData<- fullData %>% mutate(counties = boroughCode)
-View(fullData)
-tempor<- with(fullData,replace(fullData$counties, fullData$counties==1,"New York"),replace(fullData$counties, fullData$counties==3,"Brooklyn"))
-tempor
+
+
+fullData = fullData %>%
+  mutate( 
+    borough = case_when(
+      str_detect(borough, "Brooklyn") ~ paste("Kings"),
+      str_detect(borough, "Manhattan") ~ paste("New York"),
+      str_detect(borough, "Staten Island") ~ paste("Richmond"),
+      str_detect(borough, "Queens") ~ paste("Queens"),
+      str_detect(borough, "Bronx") ~ paste("Bronx")))
+
 fullData %>% filter(day%in%c(1:31))
 
 # register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
