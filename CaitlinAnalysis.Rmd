@@ -1,0 +1,78 @@
+---
+title: "CaitlinAnalysis"
+author: "Caitlin Bolz"
+date: "4/28/2021"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(leaps)
+library(DAAG)
+library(recipes)
+library(stringr)
+library(tidytext)
+library(ggplot2)
+library(tidymodels)
+library(ggrepel)
+```
+
+```{r}
+fullData = read_csv("fulldata.csv")
+```
+
+# Formatting data
+```{r}
+Y<-fullData %>% 
+  group_by(day, hour) %>% 
+  summarize(pickup = n(), windspeed, pressure, temperature, Humidity, Lat, Lon, boroughCode) %>%
+  mutate(hours = as.double(hour)) %>% 
+  ungroup %>% 
+  transmute(hour, day, pickup, windspeed, pressure, temperature, Humidity, Lat, Lon, boroughCode)
+```
+
+# Linear Model
+```{r}
+lin<-lm(pickup~.,data = Y)
+summary(lin)
+```
+
+# PCA
+```{r}
+pca_rep = recipe(~., data = Y) %>% 
+  update_role(day, hour, new_role = "id") %>% 
+  step_normalize(all_predictors()) %>% 
+  step_pca(all_predictors())
+
+pca_prep = prep(pca_rep)
+
+components = tidy(pca_prep, 2)
+scores = juice(pca_prep)
+variances = tidy(pca_prep, 2, type = "variance")
+
+components = components %>%
+  filter(component %in% str_c("PC", 1:6))
+```
+
+## plot of variance
+```{r}
+variances = variances %>% filter(terms == "percent variance")
+ggplot(variances) +  geom_col(aes(component, value))
+```
+
+## plot of top 6 components
+```{r fig.align=, fig.cap="Q4 Part B"}
+ggplot(components, aes(value, terms)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ component, scales = "free_y") +
+  scale_y_reordered() +
+  labs(y = NULL) +
+  theme(axis.text = element_text(size = 7), strip.text = element_text(size = 8))
+```
+
+# scores, not the best graph
+```{r}
+ggplot(scores, aes(PC1, PC2, label = hour)) +
+  geom_point(aes(color = hour), alpha = 0.5, size = .5) +
+  scale_color_viridis_c()
+```
