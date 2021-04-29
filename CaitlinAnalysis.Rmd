@@ -5,7 +5,7 @@ date: "4/28/2021"
 output: html_document
 ---
 
-```{r}
+```{r message=FALSE}
 library(readr)
 library(leaps)
 library(DAAG)
@@ -13,11 +13,10 @@ library(recipes)
 library(stringr)
 library(tidytext)
 library(ggplot2)
-library(tidymodels)
 library(ggrepel)
 ```
 
-```{r}
+```{r message=FALSE}
 fullData = read_csv("fulldata.csv")
 ```
 
@@ -39,7 +38,7 @@ summary(lin)
 
 # PCA
 ```{r}
-pca_rep = recipe(~., data = Y) %>% 
+pca_rep = recipe(pickup~., data = Y) %>% 
   update_role(day, hour, new_role = "id") %>% 
   step_normalize(all_predictors()) %>% 
   step_pca(all_predictors())
@@ -51,7 +50,8 @@ scores = juice(pca_prep)
 variances = tidy(pca_prep, 2, type = "variance")
 
 components = components %>%
-  filter(component %in% str_c("PC", 1:6))
+  filter(component %in% str_c("PC", 1:6)) %>% 
+  mutate(terms = reorder_within(terms, abs(value), component))
 ```
 
 ## plot of variance
@@ -61,18 +61,36 @@ ggplot(variances) +  geom_col(aes(component, value))
 ```
 
 ## plot of top 6 components
-```{r fig.align=, fig.cap="Q4 Part B"}
+```{r}
 ggplot(components, aes(value, terms)) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~ component, scales = "free_y") +
   scale_y_reordered() +
   labs(y = NULL) +
-  theme(axis.text = element_text(size = 7), strip.text = element_text(size = 8))
+  theme(axis.text = element_text(size = 10), strip.text = element_text(size = 10))
 ```
 
 # scores, not the best graph
 ```{r}
 ggplot(scores, aes(PC1, PC2, label = hour)) +
+  geom_point(aes(color = hour), alpha = 0.5, size = .5) +
+  scale_color_viridis_c()
+```
+
+```{r}
+ggplot(scores, aes(PC3, PC4, label = hour)) +
+  geom_point(aes(color = hour), alpha = 0.5, size = .5) +
+  scale_color_viridis_c()
+```
+
+```{r}
+ggplot(scores, aes(PC2, PC4, label = hour)) +
+  geom_point(aes(color = hour), alpha = 0.5, size = .5) +
+  scale_color_viridis_c()
+```
+
+```{r}
+ggplot(scores, aes(PC3, PC5, label = hour)) +
   geom_point(aes(color = hour), alpha = 0.5, size = .5) +
   scale_color_viridis_c()
 ```
