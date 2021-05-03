@@ -5,7 +5,7 @@ library(readr)
 library(ggplot2)
 library(stringr)
 
-borough<- c("Manhattan","Brooklyn","Queens","Bronx","Staten Island")
+borough<- c("New York","Kings","Queens","Bronx","Richmond")
 fullData<- read_csv("fullData.csv")
 View(fullData)
 fullData = fullData %>%
