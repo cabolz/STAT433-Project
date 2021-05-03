@@ -19,7 +19,7 @@ fullData = fullData %>%
 
 fullData %>% filter(day%in%c(1:31))
 write_csv(fullData,"fullData.csv")
-# register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
+mapKey = register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
 
 # Get lat/long coordinates for NY counties
 choropleth = map_data("county") %>% 
@@ -88,3 +88,46 @@ shinyApp(ui, server)
 #                 filter(borough=="Staten Island") %>% 
 #                 filter(day%in%c(input$range[1]:input$range[2])))
 # 
+library(tigris)
+library(dplyr)
+library(leaflet)
+library(sp)
+library(ggmap)
+library(maptools)
+library(broom)
+library(httr)
+library(rgdal)
+r <- GET('http://data.beta.nyc//dataset/0ff93d2d-90ba-457c-9f7e-39e47bf2ac5f/resource/35dd04fb-81b3-479b-a074-a27a37888ce7/download/d085e2f8d0b54d4590b1e7d1f35594c1pediacitiesnycneighborhoods.geojson')
+nyc_neighborhoods <- readOGR(content(r,'text'), 'OGRGeoJSON', verbose = F)
+lats <- fullData$Lat
+lngs <- fullData$Lon
+points <- data.frame(lat=lats, lng=lngs)
+points
+points_spdf <- points
+coordinates(points_spdf) <- ~lng + lat
+proj4string(points_spdf) <- proj4string(nyc_neighborhoods)
+matches <- over(points_spdf, nyc_neighborhoods)
+points <- cbind(points, matches)
+points
+leaflet(nyc_neighborhoods) %>%
+  addTiles() %>% 
+  addPolygons(popup = ~neighborhood) %>% 
+  addProviderTiles("CartoDB.Positron") %>%
+  setView(-73.98, 40.75, zoom = 13)
+points_by_neighborhood <- points %>%
+  group_by(neighborhood) %>%
+  summarize(num_points=n())
+
+map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood, "neighborhood", "neighborhood")
+
+pal <- colorNumeric(palette = "RdBu",
+                    domain = range(map_data@data$num_points, na.rm=T))
+
+leaflet(map_data) %>%
+  addTiles() %>% 
+  addPolygons(fillColor = ~pal(num_points), popup = ~neighborhood,fillOpacity = .7,
+              weight = 1.3) %>% 
+  addProviderTiles("CartoDB.Positron") %>%
+  setView(-73.98, 40.75, zoom = 13)
+
+pal <- colorNumeric(palette = "YlOrRd",domain = range(map_data@data$num_points, na.rm=T))
