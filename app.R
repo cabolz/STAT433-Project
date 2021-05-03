@@ -99,8 +99,12 @@ library(httr)
 library(rgdal)
 r <- GET('http://data.beta.nyc//dataset/0ff93d2d-90ba-457c-9f7e-39e47bf2ac5f/resource/35dd04fb-81b3-479b-a074-a27a37888ce7/download/d085e2f8d0b54d4590b1e7d1f35594c1pediacitiesnycneighborhoods.geojson')
 nyc_neighborhoods <- readOGR(content(r,'text'), 'OGRGeoJSON', verbose = F)
-lats <- fullData$Lat
-lngs <- fullData$Lon
+richmond = fullData %>% 
+  filter(borough == "Richmond") %>% 
+kings = fullData %>% 
+  filter(borough == "Kings")
+lats <- kings$Lat
+lngs <- kings$Lon
 points <- data.frame(lat=lats, lng=lngs)
 points
 points_spdf <- points
