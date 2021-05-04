@@ -26,22 +26,19 @@ ui <- fluidPage(
       helpText("data from NYC Taxi & Limousine Commission"),
       sliderInput("range","May 2014",value=c(1,31),min=1,max=31),
       selectInput("var","Which borough would you like to see?",borough)),
-    mainPanel(plotOutput(new_york)))
+    mainPanel(leafletOutput(new_york)))
 )
 
 server = function(input,output) {
   this.Borough<- switch(input$var,
-                "New York" = newyorkborough%>% 
-                filter(day%in%c(input$range[1]:input$range[2])),
-                "kings" = kingsborough %>% 
-                filter(day%in%c(input$range[1]:input$range[2])),
-                "Queens" = queensborough%>% 
-                filter(day%in%c(input$range[1]:input$range[2])),
-                "Bronx" = bronxborough %>% 
-                filter(day%in%c(input$range[1]:input$range[2])),
-                "Richmond" = richmondborough %>% 
-                filter(day%in%c(input$range[1]:input$range[2])))
-  new_york = nyc_map(this.Borough)
+                "New York" = newyorkborough,
+                "kings" = kingsborough,
+                "Queens" = queensborough,
+                "Bronx" = bronxborough,
+                "Richmond" = richmondborough)
+  this.range = this.Borough %>% 
+    filter(day%in%range[1]:input$range[2])
+  new_york = nyc_map(this.range)
 }
 shinyApp(ui,server)
 
