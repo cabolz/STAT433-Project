@@ -4,6 +4,7 @@ library(plotly)
 library(readr)
 library(ggplot2)
 library(stringr)
+library(leaflet)
 
 borough<- c("New York","Kings","Queens","Bronx","Richmond")
 fullData<- read_csv("fullData.csv")
@@ -69,69 +70,36 @@ server <- function(input, output) {
 
 shinyApp(ui, server)
 
-# data<- switch(input$var,
-#               "NYC" = fullData %>% 
-#                 filter(day%in%c(input$range[1]:input$range[2])),
-#               "Manhattan" = fullData%>% 
-#                 filter(borough=="Manhattan") %>% 
-#                 filter(day%in%c(input$range[1]:input$range[2])),
-#               "Brooklyn" = fullData%>% 
-#                 filter(borough=="Brooklyn") %>% 
-#                 filter(day%in%c(input$range[1]:input$range[2])),
-#               "Queens" = fullData%>% 
-#                 filter(borough=="Queens") %>% 
-#                 filter(day%in%c(input$range[1]:input$range[2])),
-#               "Bronx" = fullData%>% 
-#                 filter(borough=="Bronx") %>% 
-#                 filter(day%in%c(input$range[1]:input$range[2])),
-#               "Staten Island" = fullData%>% 
-#                 filter(borough=="Staten Island") %>% 
-#                 filter(day%in%c(input$range[1]:input$range[2])))
-# 
-library(tigris)
-library(dplyr)
-library(leaflet)
-library(sp)
-library(ggmap)
-library(maptools)
-library(broom)
-library(httr)
-library(rgdal)
 r <- GET('http://data.beta.nyc//dataset/0ff93d2d-90ba-457c-9f7e-39e47bf2ac5f/resource/35dd04fb-81b3-479b-a074-a27a37888ce7/download/d085e2f8d0b54d4590b1e7d1f35594c1pediacitiesnycneighborhoods.geojson')
 nyc_neighborhoods <- readOGR(content(r,'text'), 'OGRGeoJSON', verbose = F)
-richmond = fullData %>% 
-  filter(borough == "Richmond") %>% 
-kings = fullData %>% 
-  filter(borough == "Kings")
-lats <- kings$Lat
-lngs <- kings$Lon
-points <- data.frame(lat=lats, lng=lngs)
-points
-points_spdf <- points
-coordinates(points_spdf) <- ~lng + lat
-proj4string(points_spdf) <- proj4string(nyc_neighborhoods)
-matches <- over(points_spdf, nyc_neighborhoods)
-points <- cbind(points, matches)
-points
-leaflet(nyc_neighborhoods) %>%
-  addTiles() %>% 
-  addPolygons(popup = ~neighborhood) %>% 
-  addProviderTiles("CartoDB.Positron") %>%
-  setView(-73.98, 40.75, zoom = 13)
-points_by_neighborhood <- points %>%
-  group_by(neighborhood) %>%
-  summarize(num_points=n())
+bronxborough = read_csv("bronxborough.csv")
+queensborough = read_csv("queensborough.csv")
+newyorkborough = read_csv("newyorkborough.csv")
+richmondborough = read_csv("richmondborough.csv")
+kingsborough = read_csv("kingsborough.csv")
+source("helpers.R")
+ui <- fluidPage(
+  titlePanel("NYC Uber Pickup"),
+  sidebarLayout(
+    sidebarPanel(
+      helpText("data from NYC Taxi & Limousine Commission"),
+      sliderInput("range","May 2014",value=c(1,31),min=1,max=31),
+      selectInput("var","Which borough would you like to see?",borough)),
+    mainPanel(plotOutput(new_york)))
+)
 
-map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood, "neighborhood", "neighborhood")
-
-pal <- colorNumeric(palette = "RdBu",
-                    domain = range(map_data@data$num_points, na.rm=T))
-
-leaflet(map_data) %>%
-  addTiles() %>% 
-  addPolygons(fillColor = ~pal(num_points), popup = ~neighborhood,fillOpacity = .7,
-              weight = 1.3) %>% 
-  addProviderTiles("CartoDB.Positron") %>%
-  setView(-73.98, 40.75, zoom = 13)
-
-pal <- colorNumeric(palette = "YlOrRd",domain = range(map_data@data$num_points, na.rm=T))
+server = function(input,output) {
+  this.Borough<- switch(input$var,
+                "New York" = newyorkborough%>% 
+                filter(day%in%c(input$range[1]:input$range[2])),
+                "kings" = kingsborough %>% 
+                filter(day%in%c(input$range[1]:input$range[2])),
+                "Queens" = queensborough%>% 
+                filter(day%in%c(input$range[1]:input$range[2])),
+                "Bronx" = bronxborough %>% 
+                filter(day%in%c(input$range[1]:input$range[2])),
+                "Richmond" = richmondborough %>% 
+                filter(day%in%c(input$range[1]:input$range[2])))
+  new_york = nyc_map(this.Borough)
+}
+shinyApp(ui,server)
