@@ -117,5 +117,13 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
     fill = "Temperature") +
   scale_x_continuous(breaks = waiver(), n.breaks = 6)
 ```
-
-
+group by day,hour, and county for Y var
+```{r}
+fullData = read_csv("fullData.csv")
+```
+```{r}
+full = fullData %>% 
+  group_by(borough,day,hour,dayOfWeek,windspeed,pressure,Humidity,SkyDesciption,temperature) %>% 
+  summarize(pickups = n())
+full
+```
