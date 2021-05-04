@@ -24,21 +24,33 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       helpText("data from NYC Taxi & Limousine Commission"),
-      sliderInput("range","May 2014",value=c(1,31),min=1,max=31),
-      selectInput("var","Which borough would you like to see?",borough)),
-    mainPanel(leafletOutput(new_york)))
+      #sliderInput("range","May 2014",value=c(1,31),min=1,max=31),
+      selectInput("df","Which borough would you like to see?",borough)),
+    mainPanel(leafletOutput("map")))
 )
 
 server = function(input,output) {
-  this.Borough<- switch(input$var,
+  this.Borough<- switch(reactive(input$df),
                 "New York" = newyorkborough,
                 "kings" = kingsborough,
                 "Queens" = queensborough,
                 "Bronx" = bronxborough,
                 "Richmond" = richmondborough)
-  this.range = this.Borough %>% 
-    filter(day%in%range[1]:input$range[2])
-  new_york = nyc_map(this.range)
+  points_by_neighborhood <- this.Borough%>%
+    group_by(neighborhood) %>%
+    summarize(num_points=n())
+
+  map_data <- geo_join(nyc_neighborhoods, points_by_neighborhood, "neighborhood", "neighborhood")
+  
+  pal <- colorNumeric(palette = "RdBu",
+                      domain = range(map_data@data$num_points, na.rm=T))
+  output$map = renderLeaflet({
+    leaflet(map_data) %>% 
+      addTiles() %>% 
+      addPolygons(fillColor = ~pal(num_points), popup = ~neighborhood,fillOpacity = .7,
+                  weight = 1.3) %>% 
+      setView(-73.98,40.75, zoom =12)
+  })
 }
 shinyApp(ui,server)
 
@@ -92,4 +104,5 @@ shinyApp(ui,server)
 #       layout(xaxis=list(fixedrange=F),
 #              yaxis=list(fixedrange=F))})}
 # shinyApp(ui, server)
+
 
