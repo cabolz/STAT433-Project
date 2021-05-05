@@ -7,39 +7,6 @@ library(stringr)
 library(tidyverse)
 
 borough<- c("Manhattan","Brooklyn","Queens","Bronx","Staten Island")
-fullData<- read_csv("fullData.csv")
-
-
-fullData = fullData %>%
-  mutate( 
-    borough = case_when(
-      str_detect(borough, "Brooklyn") ~ paste("Kings"),
-      str_detect(borough, "Manhattan") ~ paste("New York"),
-      str_detect(borough, "Staten Island") ~ paste("Richmond"),
-      str_detect(borough, "Queens") ~ paste("Queens"),
-      str_detect(borough, "Bronx") ~ paste("Bronx")))
-
-fullData$dayOfWeekNumeric = fullData$dayOfWeek
-test = fullData %>% 
-  mutate(
-    dayOfWeekNumeric = case_when(
-      str_detect(dayOfWeekNumeric,"Thursday") ~ paste("5"),
-      str_detect(dayOfWeekNumeric,"Friday") ~ paste("6"),
-      str_detect(dayOfWeekNumeric,"Saturday") ~ paste("7"),
-      str_detect(dayOfWeekNumeric,"Sunday") ~ paste("1"),
-      str_detect(dayOfWeekNumeric,"Monday") ~ paste("2"),
-      str_detect(dayOfWeekNumeric,"Tuesday") ~ paste("3"),
-      str_detect(dayOfWeekNumeric,"Wednesday") ~ paste("4")
-    ))
-View(test)
-tab = fullData %>% 
-  transmute(borough, neighborhood, day,neighborhood) %>% 
-  na.omit(borough) %>% 
-  group_by(day,borough) %>% 
-  summarize(num_pickups = n()) %>% 
-  pivot_wider(names_from = borough, values_from = num_pickups)
-tab
-
 # register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
 
 # Get lat/long coordinates for NY counties
