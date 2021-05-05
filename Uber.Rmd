@@ -7,6 +7,13 @@ output: html_document
 library(dplyr)
 library(readr)
 library(tidyverse)
+library(leaps)
+library(DAAG)
+library(recipes)
+library(stringr)
+library(tidytext)
+library(ggplot2)
+library(ggrepel)
 ```
 
 
@@ -23,14 +30,11 @@ brokenUp2<-loc2 %>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
-```
 
-
-```{r message=FALSE}
 uberDataSet<-full_join(brokenUp,brokenUp2)
 ```
 
-I found some data on weather in New York City but it was from 2012 to 2017 so I had to cut some of the fat out
+Reading in weather
 ```{r message=FALSE}
 hum<-read_csv("humidity.csv")
 Humidityin2014<-hum %>% 
@@ -95,16 +99,13 @@ UberandWeather
 ```
 
 
-```{r}
-write_csv(UberandWeather, "UberandWeather.csv")
-```
 
 ```{r}
 UberandWeather %>% summarise(sum(is.na(Humidity)))
 ```
 
 ```{r}
-uw = read_csv("UberandWeather.csv")
+uw = UberandWeather
 lats <- uw$Lat
 lngs <- uw$Lon
 points <- data.frame(lat=lats, lng=lngs)
@@ -123,11 +124,9 @@ fullData = distinct(fullData)
 fullData = fullData %>% 
   transmute(Lat,Lon,neighborhood,boroughCode,borough,month,day,hour,minute,dayOfWeek,
             windspeed,pressure,Humidity,SkyDesciption,temperature)
-write_csv(fullData,"fullData.csv")
 ```
 
 ```{r}
-library(ggplot2)
 UberandWeather<- read_csv("UberandWeather.csv")
 View(UberandWeather)
 sum<-UberandWeather %>%
@@ -145,15 +144,11 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
     fill = "Temperature") +
   scale_x_continuous(breaks = waiver(), n.breaks = 6)
 ```
-group by day,hour, and county for Y var
-```{r}
-fullData = read_csv("fullData.csv")
-```
+
+
+
 New dataframes
 ```{r}
-fullData<- read_csv("fullData.csv")
-
-
 fullData = fullData %>%
   mutate( 
     borough = case_when(
@@ -175,29 +170,12 @@ fullData = fullData %>%
       str_detect(dayOfWeekNumeric,"Tuesday") ~ paste("3"),
       str_detect(dayOfWeekNumeric,"Wednesday") ~ paste("4")
     ))
-View(fullData)
 tab = fullData %>% 
   transmute(borough, neighborhood, day,neighborhood) %>% 
   na.omit(borough) %>% 
   group_by(day,borough) %>% 
   summarize(num_pickups = n()) %>% 
   pivot_wider(names_from = borough, values_from = num_pickups)
-tab
-```
-
-```{r message=FALSE}
-library(readr)
-library(leaps)
-library(DAAG)
-library(recipes)
-library(stringr)
-library(tidytext)
-library(ggplot2)
-library(ggrepel)
-```
-
-```{r message=FALSE}
-fullData = read_csv("fulldata.csv")
 ```
 
 # Formatting data
@@ -258,26 +236,20 @@ ggplot(components, aes(value, terms)) +
   theme(axis.text = element_text(size = 10), strip.text = element_text(size = 10))
 ```
 
-# scores, not the best graph
+## scores, not the best graph
 ```{r}
 ggplot(scores, aes(PC1, PC2, label = hour)) +
   geom_point(aes(color = hour), alpha = 0.5, size = .5) +
   scale_color_viridis_c()
-```
 
-```{r}
 ggplot(scores, aes(PC3, PC4, label = hour)) +
   geom_point(aes(color = hour), alpha = 0.5, size = .5) +
   scale_color_viridis_c()
-```
 
-```{r}
 ggplot(scores, aes(PC2, PC4, label = hour)) +
   geom_point(aes(color = hour), alpha = 0.5, size = .5) +
   scale_color_viridis_c()
-```
 
-```{r}
 ggplot(scores, aes(PC3, PC5, label = hour)) +
   geom_point(aes(color = hour), alpha = 0.5, size = .5) +
   scale_color_viridis_c()
@@ -315,3 +287,8 @@ fig
 
 ```
 
+# write stuff needed for app at the end here
+```{r}
+write_csv(UberandWeather, "UberandWeather.csv")
+wrtie_csv(fullData, "FullData.csv")
+```
