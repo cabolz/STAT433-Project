@@ -123,6 +123,7 @@ fullData = fullData %>%
             windspeed,pressure,Humidity,SkyDescription,temperature)
 ```
 
+# figure 1
 ```{r}
 sum<-UberandWeather %>%
   filter(month == 5) %>% 
@@ -142,7 +143,7 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
 
 
 
-New dataframes
+# New dataframes
 ```{r}
 fullData = fullData %>%
   mutate( 
