@@ -60,29 +60,5 @@ server <- function(input, output) {
 }
 
 shinyApp(ui, server)
-library(plotly)
-library(rjson)
-r1 = 'http://data.beta.nyc//dataset/0ff93d2d-90ba-457c-9f7e-39e47bf2ac5f/resource/35dd04fb-81b3-479b-a074-a27a37888ce7/download/d085e2f8d0b54d4590b1e7d1f35594c1pediacitiesnycneighborhoods.geojson'
-geojson <- rjson::fromJSON(file=r1)
-full = fullData %>% 
-  transmute(borough,neighborhood,day) %>% 
-  group_by(borough,day,neighborhood) %>% 
-  summarize(num_points= n(),borough,day)
-full = distinct(full)
-full
-fig <- plot_ly() 
-fig <- fig %>% add_trace(
-  type="choroplethmapbox",
-  geojson=geojson,
-  locations=full$neighborhood,
-  z=full$num_points,
-  colorscale="Viridis",
-  featureidkey = "properties.neighborhood"
-)
-fig <- fig %>% layout(
-  mapbox=list(
-    style="carto-positron",
-    zoom =9,
-    center=list(lon = -73.98,lat =  40.75))
-)
-fig
+
+
