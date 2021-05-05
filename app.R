@@ -19,6 +19,19 @@ fullData = fullData %>%
       str_detect(borough, "Queens") ~ paste("Queens"),
       str_detect(borough, "Bronx") ~ paste("Bronx")))
 
+fullData$dayOfWeekNumeric = fullData$dayOfWeek
+test = fullData %>% 
+  mutate(
+    dayOfWeekNumeric = case_when(
+      str_detect(dayOfWeekNumeric,"Thursday") ~ paste("5"),
+      str_detect(dayOfWeekNumeric,"Friday") ~ paste("6"),
+      str_detect(dayOfWeekNumeric,"Saturday") ~ paste("7"),
+      str_detect(dayOfWeekNumeric,"Sunday") ~ paste("1"),
+      str_detect(dayOfWeekNumeric,"Monday") ~ paste("2"),
+      str_detect(dayOfWeekNumeric,"Tuesday") ~ paste("3"),
+      str_detect(dayOfWeekNumeric,"Wednesday") ~ paste("4")
+    ))
+View(test)
 tab = fullData %>% 
   transmute(borough, neighborhood, day,neighborhood) %>% 
   na.omit(borough) %>% 

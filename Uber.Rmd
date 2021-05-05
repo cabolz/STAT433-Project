@@ -126,11 +126,40 @@ group by day,hour, and county for Y var
 ```{r}
 fullData = read_csv("fullData.csv")
 ```
+New dataframes
 ```{r}
-full = fullData %>% 
-  group_by(borough,day,hour,dayOfWeek,windspeed,pressure,Humidity,SkyDesciption,temperature) %>% 
-  summarize(pickups = n())
-full
+fullData<- read_csv("fullData.csv")
+
+
+fullData = fullData %>%
+  mutate( 
+    borough = case_when(
+      str_detect(borough, "Brooklyn") ~ paste("Kings"),
+      str_detect(borough, "Manhattan") ~ paste("New York"),
+      str_detect(borough, "Staten Island") ~ paste("Richmond"),
+      str_detect(borough, "Queens") ~ paste("Queens"),
+      str_detect(borough, "Bronx") ~ paste("Bronx")))
+
+fullData$dayOfWeekNumeric = fullData$dayOfWeek
+fullData = fullData %>% 
+  mutate(
+    dayOfWeekNumeric = case_when(
+      str_detect(dayOfWeekNumeric,"Thursday") ~ paste("5"),
+      str_detect(dayOfWeekNumeric,"Friday") ~ paste("6"),
+      str_detect(dayOfWeekNumeric,"Saturday") ~ paste("7"),
+      str_detect(dayOfWeekNumeric,"Sunday") ~ paste("1"),
+      str_detect(dayOfWeekNumeric,"Monday") ~ paste("2"),
+      str_detect(dayOfWeekNumeric,"Tuesday") ~ paste("3"),
+      str_detect(dayOfWeekNumeric,"Wednesday") ~ paste("4")
+    ))
+View(fullData)
+tab = fullData %>% 
+  transmute(borough, neighborhood, day,neighborhood) %>% 
+  na.omit(borough) %>% 
+  group_by(day,borough) %>% 
+  summarize(num_pickups = n()) %>% 
+  pivot_wider(names_from = borough, values_from = num_pickups)
+tab
 ```
 
 ```{r message=FALSE}
@@ -161,6 +190,9 @@ Yhat = fullData %>%
   group_by(hour,day,boroughCode,dayOfWeek) %>% 
   summarize(pickup = n()) %>% 
   full_join(weather)
+fullData %>% 
+  group_by(dayOfWeek) %>% 
+  summarize(count =n())
 ```
 
 # Linear Model
