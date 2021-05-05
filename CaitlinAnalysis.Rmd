@@ -28,11 +28,6 @@ Y<-fullData %>%
   mutate(hours = as.double(hour)) %>% 
   ungroup %>% 
   transmute(hour, day, pickup, windspeed, pressure, temperature, Humidity, Lat, Lon, boroughCode)
-weather =weatherData %>% 
-  filter(month==5) %>% 
-  transmute(hour,day,temperature,pressure,windspeed,Humidity) %>% 
-  mutate(hour = as.double(hour)) %>% 
-  mutate(day = as.double(day))
 Yhat = fullData %>% 
   na.omit(neighborhood) %>% 
   group_by(hour,day,boroughCode,dayOfWeek) %>% 

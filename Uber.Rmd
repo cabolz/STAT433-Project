@@ -76,6 +76,11 @@ weatherData<-full_join(temporary,JustTemp) %>%
 weatherData<- weatherData %>%  
   transmute(hour,day,month,windspeed,pressure,Humidity,SkyDesciption,temperature)
 weatherData
+weather =weatherData %>% 
+  filter(month==5) %>% 
+  transmute(hour,day,temperature,pressure,windspeed,Humidity) %>% 
+  mutate(hour = as.double(hour)) %>% 
+  mutate(day = as.double(day))
 View(weatherData)
 ```
 
