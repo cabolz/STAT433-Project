@@ -30,26 +30,25 @@ Y<-fullData %>%
   transmute(hour, day, pickup, windspeed, pressure, temperature, Humidity, Lat, Lon, boroughCode)
 weather =weatherData %>% 
   filter(month==5) %>% 
-  transmute(hour,day,temperature,pressure,windspeed,SkyDesciption,Humidity) %>% 
+  transmute(hour,day,temperature,pressure,windspeed,Humidity) %>% 
   mutate(hour = as.double(hour)) %>% 
   mutate(day = as.double(day))
 Yhat = fullData %>% 
-      na.omit(neighborhood) %>% 
-  group_by(hour,day,borough) %>% 
+  na.omit(neighborhood) %>% 
+  group_by(hour,day,boroughCode,dayOfWeek) %>% 
   summarize(pickup = n()) %>% 
   full_join(weather)
-Yhat
 ```
 
 # Linear Model
 ```{r}
-lin<-lm(pickup~.,data = Y)
+lin<-lm(pickup~.,data = Yhat)
 summary(lin)
 ```
 
 # PCA
 ```{r}
-pca_rep = recipe(pickup~., data = Y) %>% 
+pca_rep = recipe(pickup~., data = Yhat) %>% 
   update_role(day, hour, new_role = "id") %>% 
   step_normalize(all_predictors()) %>% 
   step_pca(all_predictors())
