@@ -30,7 +30,7 @@ library(rgdal)
 
 ```{r message=FALSE}
 may<-read_csv("uber-raw-data-may14.csv")
-cleanmay = loc2 %>% 
+cleanmay = may %>% 
   separate("Date/Time", into =c("Date","Time"), sep= " ") %>% 
   mutate(dayOfWeek = Date) %>% 
   mutate(dayOfWeek = mdy(Date)) %>% 
