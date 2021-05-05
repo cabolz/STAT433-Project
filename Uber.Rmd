@@ -20,8 +20,8 @@ library(sp)
 
 
 ```{r message=FALSE}
-loc2<-read_csv("uber-raw-data-may14.csv")
-brokenUp2 = loc2 %>% 
+may<-read_csv("uber-raw-data-may14.csv")
+cleanmay = loc2 %>% 
   separate("Date/Time", into =c("Date","Time"), sep= " ") %>% 
   mutate(dayOfWeek = Date) %>% 
   mutate(dayOfWeek = mdy(Date)) %>% 
@@ -86,7 +86,7 @@ weather =weatherData %>%
 
 Uber and Weather together
 ```{r warning=FALSE}
-UberandWeather <- brokenUp2 %>% 
+UberandWeather <- cleanmay %>% 
   full_join(weatherData) 
 UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDescription", "temperature", "pressure","windspeed"))
 UberandWeather <- na.omit(UberandWeather)
