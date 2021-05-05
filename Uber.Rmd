@@ -14,15 +14,18 @@ library(stringr)
 library(tidytext)
 library(ggplot2)
 library(ggrepel)
+library(lubridate)
 ```
 
 
 ```{r message=FALSE}
 loc2<-read_csv("uber-raw-data-may14.csv")
-brokenUp2<-loc2 %>% 
-  separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
-  mutate("date"=Date) %>% 
-  separate("date", into = c("month","day","year"),sep="/")%>% 
+brokenUp2 = loc2 %>% 
+  separate("Date/Time", into =c("Date","Time"), sep= " ") %>% 
+  mutate(dayOfWeek = Date) %>% 
+  mutate(dayOfWeek = mdy(Date)) %>% 
+  mutate(dayOfWeek = wday(dayOfWeek)) %>% 
+  separate(Date, into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
 ```
 
