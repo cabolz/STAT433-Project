@@ -154,55 +154,58 @@ fullData = fullData %>%
       str_detect(borough, "Queens") ~ paste("Queens"),
       str_detect(borough, "Bronx") ~ paste("Bronx")))
 
-fullData$dayOfWeekNumeric = fullData$dayOfWeek
-fullData = fullData %>% 
-  mutate(
-    dayOfWeekNumeric = case_when(
-      str_detect(dayOfWeekNumeric,"Thursday") ~ paste("5"),
-      str_detect(dayOfWeekNumeric,"Friday") ~ paste("6"),
-      str_detect(dayOfWeekNumeric,"Saturday") ~ paste("7"),
-      str_detect(dayOfWeekNumeric,"Sunday") ~ paste("1"),
-      str_detect(dayOfWeekNumeric,"Monday") ~ paste("2"),
-      str_detect(dayOfWeekNumeric,"Tuesday") ~ paste("3"),
-      str_detect(dayOfWeekNumeric,"Wednesday") ~ paste("4")
-    ))
+# fullData = fullData %>% 
+#   mutate(
+#     dayOfWeekNumeric = case_when(
+#       str_detect(dayOfWeekNumeric,"Thursday") ~ paste("5"),
+#       str_detect(dayOfWeekNumeric,"Friday") ~ paste("6"),
+#       str_detect(dayOfWeekNumeric,"Saturday") ~ paste("7"),
+#       str_detect(dayOfWeekNumeric,"Sunday") ~ paste("1"),
+#       str_detect(dayOfWeekNumeric,"Monday") ~ paste("2"),
+#       str_detect(dayOfWeekNumeric,"Tuesday") ~ paste("3"),
+#       str_detect(dayOfWeekNumeric,"Wednesday") ~ paste("4")
+#     ))
 tab = fullData %>% 
   transmute(borough, neighborhood, day,neighborhood) %>% 
   na.omit(borough) %>% 
   group_by(day,borough) %>% 
   summarize(num_pickups = n()) %>% 
   pivot_wider(names_from = borough, values_from = num_pickups)
+tab
 ```
 
 # Formatting data
 ```{r}
 Y<-fullData %>% 
   group_by(day, hour) %>% 
-  summarize(pickup = n(), windspeed, pressure, temperature, Humidity, Lat, Lon, boroughCode) %>%
-  mutate(hours = as.double(hour)) %>% 
+  summarize(pickup = n(), windspeed, pressure, temperature, Humidity, Lat, Lon, boroughCode)%>%
+  mutate(hour = as.double(hour)) %>% 
+  mutate(day = as.double(day)) %>% 
   ungroup %>% 
   transmute(hour, day, pickup, windspeed, pressure, temperature, Humidity, Lat, Lon, boroughCode)
+#Do we still need Y above?
 Yhat = fullData %>% 
-  group_by(hour,day,boroughCode,dayOfWeek) %>% 
-  summarize(pickup = n())
+  na.omit(boroughCode) %>% 
+  group_by(boroughCode,hour,day) %>% 
+  summarize(pickup = n()) %>% 
+  mutate(hour = as.double(hour)) %>% 
+  mutate(day = as.double(day)) 
 
 #do the join seperate
-Yhat %>% full_join(weather)
-
-fullData %>% 
-  group_by(dayOfWeek) %>% 
-  summarize(count =n())
+Ytilda = Yhat %>% full_join(weather) %>% mutate(boroughCode=as.double(boroughCode)) %>% 
+  mutate(pickup = as.double(pickup)) %>% na.omit(Yhat)
+Ytilda
 ```
 
 # Linear Model
 ```{r}
-lin<-lm(pickup~.,data = Yhat)
+lin<-lm(pickup~.,data = Ytilda)
 summary(lin)
 ```
 
 # PCA
 ```{r}
-pca_rep = recipe(pickup~., data = Yhat) %>% 
+pca_rep = recipe(pickup~., data = Ytilda) %>% 
   update_role(day, hour, new_role = "id") %>% 
   step_normalize(all_predictors()) %>% 
   step_pca(all_predictors())
@@ -253,6 +256,30 @@ ggplot(scores, aes(PC3, PC5, label = hour)) +
   scale_color_viridis_c()
 ```
 
+#matt's analysis
+```{r}
+library(olsrr)
+model1 = lm(pickup~., data = Ytilda)
+summary(model1)
+
+ols_vif_tol(model1)
+ols_eigen_cindex(model1)
+ols_coll_diag(model1)
+
+library(pls)
+pcr_model = pcr(pickup~., data = Ytilda, scale = T, center = T, validation = "CV")
+summary(pcr_model)
+
+par(mfrow=c(1,3))
+validationplot(pcr_model)
+validationplot(pcr_model, val.type="MSEP")
+validationplot(pcr_model, val.type = "R2")
+
+uber_model = pcr(pickup~., data = Ytilda, scale = T, center = T, ncomp = 5)
+ names(uber_model)
+Beta = coef(uber_model,ncomp = 5, intercept = T)
+Beta
+```
 
 # matt you had this in uber.rmd
 ```{r}
@@ -290,3 +317,12 @@ fig
 write_csv(UberandWeather, "UberandWeather.csv")
 wrtie_csv(fullData, "FullData.csv")
 ```
+```{r}
+library(shiny)
+?runGitHub
+runGitHub(url = "https://github.com/cabolz/STAT433-Project/blob/main/app.R",repo = "cabolz/STAT433-Project")
+```
+
+
+
+
