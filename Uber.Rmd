@@ -85,7 +85,6 @@ weather =weatherData %>%
   transmute(hour,day,temperature,pressure,windspeed,Humidity) %>% 
   mutate(hour = as.double(hour)) %>% 
   mutate(day = as.double(day))
-View(weatherData)
 ```
 
 Uber and Weather together
@@ -95,13 +94,6 @@ UberandWeather<-brokenUp2 %>%
 View(UberandWeather)
 UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature", "pressure","windspeed"))
 UberandWeather <- na.omit(UberandWeather)
-UberandWeather
-```
-
-
-
-```{r}
-UberandWeather %>% summarise(sum(is.na(Humidity)))
 ```
 
 ```{r}
@@ -127,8 +119,6 @@ fullData = fullData %>%
 ```
 
 ```{r}
-UberandWeather<- read_csv("UberandWeather.csv")
-View(UberandWeather)
 sum<-UberandWeather %>%
   filter(month == 5) %>% 
   group_by(day) %>% 
