@@ -14,32 +14,19 @@ library(stringr)
 library(tidytext)
 library(ggplot2)
 library(ggrepel)
-<<<<<<< HEAD
 library(lubridate)
-=======
 library(sp)
->>>>>>> 142d5ef11971326f753f150c4567e6bb16fcd7c6
 ```
 
 
 ```{r message=FALSE}
-<<<<<<< HEAD
 loc2<-read_csv("uber-raw-data-may14.csv")
 brokenUp2 = loc2 %>% 
   separate("Date/Time", into =c("Date","Time"), sep= " ") %>% 
   mutate(dayOfWeek = Date) %>% 
   mutate(dayOfWeek = mdy(Date)) %>% 
   mutate(dayOfWeek = wday(dayOfWeek)) %>% 
-  separate(Date, into = c("month","day","year"),sep="/")%>% 
-=======
-location <- read_csv("uber-raw-data-may14.csv")
-
-loc <- location %>% 
-  separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
-  mutate("date"=Date) %>% 
-  separate("date", into = c("month","day","year"),sep="/")%>% 
->>>>>>> 142d5ef11971326f753f150c4567e6bb16fcd7c6
-  separate(Time, into = c("hour","minute"),sep=":")
+  separate(Date, into = c("month","day","year"),sep="/")
 ```
 
 Reading in weather
