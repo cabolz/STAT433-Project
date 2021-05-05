@@ -104,6 +104,29 @@ UberandWeather %>% summarise(sum(is.na(Humidity)))
 ```
 
 ```{r}
+uw = read_csv("UberandWeather.csv")
+lats <- uw$Lat
+lngs <- uw$Lon
+points <- data.frame(lat=lats, lng=lngs)
+points_spdf <- points
+coordinates(points_spdf) <- ~lng + lat
+proj4string(points_spdf) <- proj4string(nyc_neighborhoods)
+matches <- over(points_spdf, nyc_neighborhoods)
+points <- cbind(points, matches)
+View(points)
+points$Lat = points$lat
+points$Lon = points$lng
+fullData = points %>% 
+  left_join(uw)
+View(fullData)
+fullData = distinct(fullData)
+fullData = fullData %>% 
+  transmute(Lat,Lon,neighborhood,boroughCode,borough,month,day,hour,minute,dayOfWeek,
+            windspeed,pressure,Humidity,SkyDesciption,temperature)
+write_csv(fullData,"fullData.csv")
+```
+
+```{r}
 library(ggplot2)
 UberandWeather<- read_csv("UberandWeather.csv")
 View(UberandWeather)
