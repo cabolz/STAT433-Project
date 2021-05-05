@@ -16,6 +16,15 @@ library(ggplot2)
 library(ggrepel)
 library(lubridate)
 library(sp)
+library(tigris)
+library(dplyr)
+library(leaflet)
+library(sp)
+library(ggmap)
+library(maptools)
+library(broom)
+library(httr)
+library(rgdal)
 ```
 
 
@@ -28,7 +37,7 @@ cleanmay = loc2 %>%
   mutate(dayOfWeek = wday(dayOfWeek)) %>% 
   separate(Date, into = c("month","day","year"),sep="/") %>% 
   separate(Time, into = c("hour", "minute"),sep=":")
-brokenUp2
+cleanmay
 ```
 
 Reading in weather
@@ -94,6 +103,7 @@ UberandWeather <- na.omit(UberandWeather)
 # issues in this chunk please fix matt
 ```{r}
 uw = UberandWeather
+uw
 lats <- uw$Lat
 lngs <- uw$Lon
 points <- data.frame(lat=lats, lng=lngs)
