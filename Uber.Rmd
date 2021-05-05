@@ -18,20 +18,12 @@ library(ggrepel)
 
 
 ```{r message=FALSE}
-location<-read_csv("uber-raw-data-apr14.csv") 
-brokenUp<-location %>% 
-  separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
-  mutate("date"=Date) %>% 
-  separate("date", into = c("month","day","year"),sep="/")%>% 
-  separate(Time, into = c("hour","minute"),sep=":")
 loc2<-read_csv("uber-raw-data-may14.csv")
 brokenUp2<-loc2 %>% 
   separate("Date/Time", into = c("Date","Time"),sep=" ")%>%
   mutate("date"=Date) %>% 
   separate("date", into = c("month","day","year"),sep="/")%>% 
   separate(Time, into = c("hour","minute"),sep=":")
-
-uberDataSet<-full_join(brokenUp,brokenUp2)
 ```
 
 Reading in weather
