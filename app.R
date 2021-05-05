@@ -4,10 +4,13 @@ library(plotly)
 library(readr)
 library(ggplot2)
 library(stringr)
+library(tidyverse)
 
 borough<- c("Manhattan","Brooklyn","Queens","Bronx","Staten Island")
+uw = read_csv("UberandWeather.csv")
+View(uw)
 fullData<- read_csv("fullData.csv")
-
+View(fullData)
 fullData = fullData %>%
   mutate( 
     borough = case_when(
@@ -17,7 +20,13 @@ fullData = fullData %>%
       str_detect(borough, "Queens") ~ paste("Queens"),
       str_detect(borough, "Bronx") ~ paste("Bronx")))
 
-fullData %>% filter(day%in%c(1:31))
+tab = fullData %>% 
+  transmute(borough, neighborhood, day,neighborhood) %>% 
+  na.omit(borough) %>% 
+  group_by(day,borough) %>% 
+  summarize(num_pickups = n()) %>% 
+  pivot_wider(names_from = borough, values_from = num_pickups)
+tab
 
 # register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
 
@@ -42,7 +51,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   output$countyChoropleth <- renderPlotly({
-    
+
     plot = ggplot(choropleth, aes(long, lat, group = County)) +
       geom_polygon(aes(fill = County), colour = alpha("black", 1/2), size = 0.1)  +
       labs (
@@ -54,14 +63,22 @@ server <- function(input, output) {
         axis.text = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
-      ) 
-    
+      )
+
     # Remove ability to pan and zoom, set plot dimensions
-    ggplotly(plot, width = 700, tooltip = c("County", "Species", "Density")) %>% 
-      plotly::config(displayModeBar = T) %>% 
+    ggplotly(plot, width = 700, tooltip = c("County", "Species", "Density")) %>%
+      plotly::config(displayModeBar = T) %>%
       layout(xaxis=list(fixedrange=F),
              yaxis=list(fixedrange=F))
   })
+  #choose a borough to be displayed on Choropleth map
+  # this.borough = reactive(switch(input$var,
+  #                       "Manhattan" = tab$`New York`,
+  #                       "Brooklyn" = tab$Kings,
+  #                       "Queens" = tab$Queens,
+  #                       "Bronx" = tab$Bronx,
+  #                       "Staten Island" = tab$Richmond))
+
 }
 
 shinyApp(ui, server)
