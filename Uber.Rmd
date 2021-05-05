@@ -91,7 +91,6 @@ Uber and Weather together
 ```{r warning=FALSE}
 UberandWeather<-brokenUp2 %>% 
   full_join(weatherData) 
-View(UberandWeather)
 UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature", "pressure","windspeed"))
 UberandWeather <- na.omit(UberandWeather)
 ```
@@ -106,12 +105,10 @@ coordinates(points_spdf) <- ~lng + lat
 proj4string(points_spdf) <- proj4string(nyc_neighborhoods)
 matches <- over(points_spdf, nyc_neighborhoods)
 points <- cbind(points, matches)
-View(points)
 points$Lat = points$lat
 points$Lon = points$lng
 fullData = points %>% 
   left_join(uw)
-View(fullData)
 fullData = distinct(fullData)
 fullData = fullData %>% 
   transmute(Lat,Lon,neighborhood,boroughCode,borough,month,day,hour,minute,dayOfWeek,
