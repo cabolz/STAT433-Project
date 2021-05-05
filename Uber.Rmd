@@ -183,10 +183,12 @@ Y<-fullData %>%
   ungroup %>% 
   transmute(hour, day, pickup, windspeed, pressure, temperature, Humidity, Lat, Lon, boroughCode)
 Yhat = fullData %>% 
-  na.omit(neighborhood) %>% 
   group_by(hour,day,boroughCode,dayOfWeek) %>% 
-  summarize(pickup = n()) %>% 
-  full_join(weather)
+  summarize(pickup = n())
+
+#do the join seperate
+Yhat %>% full_join(weather)
+
 fullData %>% 
   group_by(dayOfWeek) %>% 
   summarize(count =n())
