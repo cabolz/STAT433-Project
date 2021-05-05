@@ -26,7 +26,9 @@ brokenUp2 = loc2 %>%
   mutate(dayOfWeek = Date) %>% 
   mutate(dayOfWeek = mdy(Date)) %>% 
   mutate(dayOfWeek = wday(dayOfWeek)) %>% 
-  separate(Date, into = c("month","day","year"),sep="/")
+  separate(Date, into = c("month","day","year"),sep="/") %>% 
+  separate(Time, into = c("hour", "minute"),sep=":")
+brokenUp2
 ```
 
 Reading in weather
@@ -43,8 +45,8 @@ JustNewYorkSky<-Sky %>%
   separate("datetime", into = c("Date","hour"), sep = " ") %>% 
   separate("Date", into = c("month","day","year"), sep="/") %>% 
   filter(year==14) %>% 
-  mutate(SkyDesciption=`New York`) %>% 
-  transmute(hour,day,month,year,SkyDesciption)
+  mutate(SkyDescription=`New York`) %>% 
+  transmute(hour,day,month,year,SkyDescription)
 temp<-read_csv("temperature.csv")
 JustTemp<-temp %>% 
   separate("datetime", into = c("Date","hour"), sep=" ") %>% 
@@ -73,7 +75,7 @@ temporary<- full_join(win,pressur) %>%
 weatherData<-full_join(temporary,JustTemp) %>% 
   separate(hour,into = c("hour"),sep = ":")
 weatherData<- weatherData %>%  
-  transmute(hour,day,month,windspeed,pressure,Humidity,SkyDesciption,temperature)
+  transmute(hour,day,month,windspeed,pressure,Humidity,SkyDescription,temperature)
 
 weather =weatherData %>% 
   filter(month==5) %>% 
@@ -84,9 +86,9 @@ weather =weatherData %>%
 
 Uber and Weather together
 ```{r warning=FALSE}
-UberandWeather <- loc %>% 
+UberandWeather <- brokenUp2 %>% 
   full_join(weatherData) 
-UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDesciption", "temperature", "pressure","windspeed"))
+UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDescription", "temperature", "pressure","windspeed"))
 UberandWeather <- na.omit(UberandWeather)
 ```
 # issues in this chunk please fix matt
