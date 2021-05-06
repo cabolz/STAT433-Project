@@ -142,7 +142,6 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
 ```
 
 
-
 # New dataframes
 ```{r}
 fullData = fullData %>%
@@ -188,9 +187,11 @@ Yhat = fullData %>%
 
 # do the join seperate
 Ytilda = Yhat %>% full_join(weather) %>% mutate(boroughCode=as.double(boroughCode)) %>% 
-  mutate(pickup = as.double(pickup)) %>% na.omit(Yhat)
+  mutate(pickup = as.double(pickup)) %>% na.omit(Yhat) %>% 
+  ungroup
 Ytilda
 ```
+
 
 # data for app
 ```{r}
@@ -219,6 +220,12 @@ choropleth = map_data("county") %>%
 
 choropleth = choropleth %>% 
   left_join(Ynew, by = c("borough"))
+```
+
+#figure 2
+```{r}
+library(ggplot2)
+ggplot(data = Ytilda, mapping = aes(x =hour, y = pickup))+geom_point(mapping = aes(color = day))+facet_wrap(~boroughCode)
 ```
 
 # Linear Model
@@ -343,11 +350,7 @@ fig
 write_csv(UberandWeather, "UberandWeather.csv")
 wrtie_csv(fullData, "FullData.csv")
 ```
-```{r}
-library(shiny)
-?runGitHub
-runGitHub(url = "https://github.com/cabolz/STAT433-Project/blob/main/app.R",repo = "cabolz/STAT433-Project")
-```
+
 
 
 
