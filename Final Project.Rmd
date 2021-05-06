@@ -1,0 +1,18 @@
+---
+title: "Final Project"
+author: "Caitlin Bolz Matt Voss Steven Xia"
+output: html_document
+
+---
+
+                            STAT433 Final Project Report: Uber Pickups in NYC
+	The group’s GitHub repository is located at this link. The group’s shiny application can be accessed by running the following command:
+```{r}
+runGitHub("App.R", "cabolz/STAT-433").	
+```
+Introduction: In recent years, the emergence of the ridesharing application, Uber, has drastically altered the transportation industry. Just a decade ago, the streets of Manhattan were filled with yellow taxi cabs. Today, there are nearly four times as many ridesharing vehicles on the road than taxis. As Uber has led the taxi industry into a rapid decline, the group is interested in exploring its usage patterns across New York City. Specifically, the group is interested in determining the specific factors (such as time, weather, location, etc.) that have the most influence on the number of Uber pickups in NYC. This knowledge is important because it will not only help future ridesharing customers better coordinate their trip experiences, but will also assist Uber and other ridesharing companies in developing more efficient, accurate algorithms and software tailored to optimize the amount of trips purchased from their application.
+Based on the data analysis and visualizations, the group reasonably concludes that the two factors that have the greatest impact on Uber usage levels in NYC during May 2014 are humidity and temperature.
+Data:  The group collected over 624,000 rows of data from two main sources. The first subset of data originates from the NYC Taxi and Limousine Commission (TLC), and consists of 4.5 million pickups from April to September 2014 as well as 14.3 million pickups from January to June 2015. However, due to limited computer processing power, the group decided to only use Uber pickup data from May 2014. For each unique Uber trip in the first data source, there exists several spatial and temporal variables, such as ‘Hour’, ‘Day’, ‘Longitude’, ‘Latitude’, and ‘Burough’. The group’s first data source can be found at this link.
+The group’s second data source consists of weather information in NYC from 2012 to 2017. This weather data was originally collected by David Beniaguev of Hebrew University in Telaviv, Israel. Each entry in this dataset represents a single hour from a given day. Because we are only interested in the Uber trips that occurred in May 2014, we also took a subset of this second data source, only looking at weather information within May 2014. For each hour within this dataset, there is an extensive amount of weather variables such as ‘Temperature’, ‘Sky Description’, ‘Pressure’, ‘Wind Speed’, and ‘Humidity’. The group’s second data source can be found at this link.
+After the group obtained a large 2012-2017 weather dataset and cut out only the entries from 2014, this one year of NYC weather data was joined with the initial Uber pickup dataset. After inspecting our joined dataset we then found several empty entries within the ‘Humidity’ variable, originally from the weather dataset. Thus, we removed all NA values. Lastly, the group’s joined dataset was filtered for only entries during the month of May as the group had specified this timeframe.
+
