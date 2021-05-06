@@ -138,7 +138,7 @@ fullData = fullData %>%
 ```
 # Results
 
-#### figure 1
+## Figure 1
 ```{r echo=FALSE}
 sum<-UberandWeather %>%
   filter(month == 5) %>% 
@@ -271,19 +271,19 @@ write_csv(choropleth5, "choropleth5.csv")
 ```
 
 
-#### figure 2
+## Figure 2
 ```{r echo=FALSE}
 library(ggplot2)
 ggplot(data = Ytilda, mapping = aes(x =hour, y = pickup))+geom_point(mapping = aes(color = day))+facet_wrap(~boroughCode)
 ```
 
-#### Linear Model
+## Linear Model
 ```{r echo=FALSE}
 lin<-lm(pickup~.,data = Ytilda)
 summary(lin)
 ```
 
-#### PCA
+## Principal Components Analysis
 ```{r include=FALSE}
 pca_rep = recipe(pickup~., data = Ytilda) %>% 
   update_role(day, hour, new_role = "id") %>% 
@@ -301,13 +301,13 @@ components = components %>%
   mutate(terms = reorder_within(terms, abs(value), component))
 ```
 
-#### plot of variance
+## Plot of Variance
 ```{r echo=FALSE}
 variances = variances %>% filter(terms == "percent variance")
 ggplot(variances) +  geom_col(aes(component, value))
 ```
 
-#### plot of top 6 components
+## Plot of Top 6 Components
 ```{r echo=FALSE}
 ggplot(components, aes(value, terms)) +
   geom_col(show.legend = FALSE) +
@@ -317,11 +317,11 @@ ggplot(components, aes(value, terms)) +
   theme(axis.text = element_text(size = 10), strip.text = element_text(size = 10))
 ```
 
-After mapping the plot of variance, the group determined that six Principal Components is the most prudent number of components to both reduce dimensionality and variance for the model. Next, the group constructed component graphs to understand how the original factors impacted each component. We interpret the components of our Principal Components by looking at the linear coefficients of the variables used to define them. For example, we can see that the first Principal Component positively captures humidity and day of the week and negatively captures the temperature and wind speed. From here, one can see which factor impacts the value of the principal component the most. Those near zero had little effect on the individual principal component and those near the extremes had negative or positive effects on the component based on its dependent axis location. As observed from the Principal Components Analysis, one can see that PC1 is mostly about temperature and humidity, PC2 is mostly pressure, PC3 is mostly boroughCode, PC4 is mostly wind speed and day of the week. PC5 is mostly temperature, and similar to PC1, PC6 is related to both humidity and temperature.   
+After mapping the plot of variance, the group determined that six Principal Components is the most prudent number of components to both reduce dimensionality and variance for the model. Next, the group constructed component graphs to understand how the original factors impacted each component. We interpret the components of our Principal Components by looking at the linear coefficients of the variables used to define them. For example, we can see that the first Principal Component positively captures humidity and day of the week and negatively captures the temperature and wind speed. From here, one can see which factor impacts the value of the principal component the most. Those near zero had little effect on the individual principal component and those near the extremes had negative or positive effects on the component based on its dependent axis location. As observed from the Principal Components Analysis, one can see that PC1 is mostly about temperature and humidity, PC2 is mostly pressure, PC3 is mostly borough code, PC4 is mostly wind speed and day of the week. PC5 is mostly temperature, and similar to PC1, PC6 is related to both humidity and temperature.   
 
 
-#### Scores
-```{r echo=FALSE}
+
+```{r eval=FALSE, include=FALSE}
 ggplot(scores, aes(PC1, PC2, label = hour)) +
   geom_point(aes(color = hour), alpha = 1, size = 1) +
   scale_color_viridis_c()
