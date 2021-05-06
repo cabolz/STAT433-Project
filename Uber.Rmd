@@ -1,9 +1,12 @@
 ---
-title: "Uber"
-output: html_document
+title: "STAT433 Final Project Report: Uber Pickups in NYC"
+author: "Caitlin Bolz, Matt Voss, Steven Xia"
+output:
+  pdf_document: default
+  html_document: default
 ---
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 library(dplyr)
 library(readr)
 library(tidyverse)
@@ -27,8 +30,20 @@ library(httr)
 library(rgdal)
 ```
 
+The group’s GitHub repository is located at this [link](https://github.com/cabolz/STAT433-Project.git). The group’s shiny application is hosted on a shinyapps.io website and can be found at this [link](https://cabolz.shinyapps.io/STAT433-Project/).
 
-```{r message=FALSE}
+**Introduction**: In recent years, the emergence of the ridesharing application, Uber, has drastically altered the transportation industry. Just a decade ago, the streets of Manhattan were filled with yellow taxi cabs. Today, there are nearly four times as many ridesharing vehicles on the road than taxis. As Uber has led the taxi industry into a rapid decline, the group is interested in exploring its usage patterns across New York City. Specifically, the group is interested in determining the specific factors (such as time, weather, location, etc.) that have the most influence on the number of Uber pickups in NYC. This knowledge is important because it will not only help future ridesharing customers better coordinate their trip experiences, but will also assist Uber and other ridesharing companies in developing more efficient, accurate algorithms and software tailored to optimize the amount of trips purchased from their application.
+Based on the data analysis and visualizations, the group reasonably concludes that the two factors that have the greatest impact on Uber usage levels in NYC during May 2014 are Borough Code and Hour .
+
+**Data**:  The group collected over 624,000 rows of data from two main sources. The first subset of data originates from the NYC Taxi and Limousine Commission (TLC), and consists of 4.5 million pickups from April to September 2014 as well as 14.3 million pickups from January to June 2015. However, due to limited computer processing power, the group decided to only use Uber pickup data from May 2014. For each unique Uber trip in the first data source, there exists several spatial and temporal variables, such as ‘Hour’, ‘Day’, ‘Longitude’, ‘Latitude’, and ‘Burough’. The group’s first data source can be found at this [link](https://data.world/data-society/uber-pickups-in-nyc).
+
+The group’s second data source consists of weather information in NYC from 2012 to 2017. This weather data was originally collected by David Beniaguev of Hebrew University in Telaviv, Israel. Each entry in this dataset represents a single hour from a given day. Because we are only interested in the Uber trips that occurred in May 2014, we also took a subset of this second data source, only looking at weather information within May 2014. For each hour within this dataset, there is an extensive amount of weather variables such as ‘Temperature’, ‘Sky Description’, ‘Pressure’, ‘Wind Speed’, and ‘Humidity’. The group’s second data source can be found at this [link](https://www.kaggle.com/selfishgene/historical-hourly-weather-data?select=humidity.csv).
+
+After the group obtained a large 2012-2017 weather dataset and cut out only the entries from 2014, this one year of NYC weather data was joined with the initial Uber pickup dataset. After inspecting our joined dataset we then found several empty entries within the ‘Humidity’ variable, originally from the weather dataset. Thus, we removed all NA values. Lastly, the group’s joined dataset was filtered for only entries during the month of May as the group had specified this timeframe.
+
+**Methods**: The group was initially curious about the amount of Uber usage during weekdays as compared to weekends. The initial analysis of our data included a bar graph that visualized the number of Uber pickups for each day within NYC during the month of May 2014. Next, to determine the strength of each predictor, a linear model was fitted. This was followed by checking for multicollinearity to confirm that each predictor was truly independent. The group then proceeded to calculate Root Mean Squared Error for Prediction (RMSEP), Mean Squared Error of Prediction (MSEP), and R^2 correlation coefficient. Lastly, the top 5 principal components of the dataset were calculated and visualized, and a final model was created for predicting the number of pickups using our spatial, temporal, and weather variables.
+
+```{r message=FALSE, include=FALSE}
 may<-read_csv("uber-raw-data-may14.csv")
 cleanmay = may %>% 
   separate("Date/Time", into =c("Date","Time"), sep= " ") %>% 
@@ -37,11 +52,10 @@ cleanmay = may %>%
   mutate(dayOfWeek = wday(dayOfWeek)) %>% 
   separate(Date, into = c("month","day","year"),sep="/") %>% 
   separate(Time, into = c("hour", "minute"),sep=":")
-cleanmay
 ```
 
-Reading in weather
-```{r message=FALSE, warning=FALSE}
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
 hum<-read_csv("humidity.csv")
 Humidityin2014<-hum %>% 
   separate("datetime", into = c("Date","hour"), sep = " ") %>% 
@@ -93,15 +107,15 @@ weather =weatherData %>%
   mutate(day = as.double(day))
 ```
 
-Uber and Weather together
-```{r warning=FALSE}
+
+```{r warning=FALSE, include=FALSE}
 UberandWeather <- cleanmay %>% 
   full_join(weatherData) 
 UberandWeather <- subset(UberandWeather, select = c("hour", "minute", "Lat", "Lon", "month", "day", "Humidity", "SkyDescription", "temperature", "pressure","windspeed","dayOfWeek"))
 UberandWeather <- na.omit(UberandWeather)
 ```
 
-```{r}
+```{r include=FALSE}
 r <- GET('http://data.beta.nyc//dataset/0ff93d2d-90ba-457c-9f7e-39e47bf2ac5f/resource/35dd04fb-81b3-479b-a074-a27a37888ce7/download/d085e2f8d0b54d4590b1e7d1f35594c1pediacitiesnycneighborhoods.geojson')
 nyc_neighborhoods <- readOGR(content(r,'text'), 'OGRGeoJSON', verbose = F)
 uw = UberandWeather
@@ -122,9 +136,10 @@ fullData = fullData %>%
   transmute(Lat,Lon,neighborhood,boroughCode,borough,month,day,hour,minute,dayOfWeek,
             windspeed,pressure,Humidity,SkyDescription,temperature)
 ```
+# Results
 
-# figure 1
-```{r}
+#### figure 1
+```{r echo=FALSE}
 sum<-UberandWeather %>%
   filter(month == 5) %>% 
   group_by(day) %>% 
@@ -142,8 +157,8 @@ ggplot(sum, aes(x = day, y = pickup, fill = temp)) +
 ```
 
 
-# New dataframes
-```{r}
+
+```{r include=FALSE}
 fullData = fullData %>%
   mutate( 
     borough = case_when(
@@ -162,8 +177,8 @@ tab = fullData %>%
 tab
 ```
 
-# Formatting data
-```{r}
+
+```{r include=FALSE}
 Yhat = fullData %>% 
   na.omit(boroughCode) %>% 
   group_by(boroughCode,hour,day,dayOfWeek) %>% 
@@ -179,8 +194,8 @@ Ytilda
 ```
 
 
-# data for app
-```{r}
+
+```{r include=FALSE}
 Yapp = fullData %>% 
   na.omit(boroughCode) %>% 
   group_by(borough,hour,day,dayOfWeek) %>% 
@@ -215,7 +230,7 @@ Yapp5 = Yapp %>%
 ```
 
 
-```{r}
+```{r include=FALSE}
 borough = c("Manhattan","Brooklyn","Queens","Bronx","Staten Island")
 
 # Get lat/long coordinates for NY counties
@@ -230,7 +245,7 @@ choropleth = map_data("county") %>%
 ```
 
 
-```{r}
+```{r include=FALSE}
 choropleth1 = choropleth %>% 
   left_join(Yapp1, by = c("borough"))
 
@@ -247,7 +262,7 @@ choropleth5 = choropleth %>%
   left_join(Yapp5, by = c("borough"))
 ```
 
-```{r}
+```{r include=FALSE}
 write_csv(choropleth1, "choropleth1.csv")
 write_csv(choropleth2, "choropleth2.csv")
 write_csv(choropleth3, "choropleth3.csv")
@@ -256,20 +271,20 @@ write_csv(choropleth5, "choropleth5.csv")
 ```
 
 
-#figure 2
-```{r}
+#### figure 2
+```{r echo=FALSE}
 library(ggplot2)
 ggplot(data = Ytilda, mapping = aes(x =hour, y = pickup))+geom_point(mapping = aes(color = day))+facet_wrap(~boroughCode)
 ```
 
-# Linear Model
-```{r}
+#### Linear Model
+```{r echo=FALSE}
 lin<-lm(pickup~.,data = Ytilda)
 summary(lin)
 ```
 
-# PCA
-```{r}
+#### PCA
+```{r include=FALSE}
 pca_rep = recipe(pickup~., data = Ytilda) %>% 
   update_role(day, hour, new_role = "id") %>% 
   step_normalize(all_predictors()) %>% 
@@ -286,14 +301,14 @@ components = components %>%
   mutate(terms = reorder_within(terms, abs(value), component))
 ```
 
-## plot of variance
-```{r}
+#### plot of variance
+```{r echo=FALSE}
 variances = variances %>% filter(terms == "percent variance")
 ggplot(variances) +  geom_col(aes(component, value))
 ```
 
-## plot of top 6 components
-```{r}
+#### plot of top 6 components
+```{r echo=FALSE}
 ggplot(components, aes(value, terms)) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~ component, scales = "free_y") +
@@ -302,8 +317,11 @@ ggplot(components, aes(value, terms)) +
   theme(axis.text = element_text(size = 10), strip.text = element_text(size = 10))
 ```
 
-## scores, not the best graphs
-```{r}
+After mapping the plot of variance, the group determined that six Principal Components is the most prudent number of components to both reduce dimensionality and variance for the model. Next, the group constructed component graphs to understand how the original factors impacted each component. We interpret the components of our Principal Components by looking at the linear coefficients of the variables used to define them. For example, we can see that the first Principal Component positively captures humidity and day of the week and negatively captures the temperature and wind speed. From here, one can see which factor impacts the value of the principal component the most. Those near zero had little effect on the individual principal component and those near the extremes had negative or positive effects on the component based on its dependent axis location. As observed from the Principal Components Analysis, one can see that PC1 is mostly about temperature and humidity, PC2 is mostly pressure, PC3 is mostly boroughCode, PC4 is mostly wind speed and day of the week. PC5 is mostly temperature, and similar to PC1, PC6 is related to both humidity and temperature.   
+
+
+#### Scores
+```{r echo=FALSE}
 ggplot(scores, aes(PC1, PC2, label = hour)) +
   geom_point(aes(color = hour), alpha = 1, size = 1) +
   scale_color_viridis_c()
@@ -321,8 +339,13 @@ ggplot(scores, aes(PC3, PC5, label = hour)) +
   scale_color_viridis_c()
 ```
 
-# matt's analysis
-```{r}
+# Conclusion 
+
+The group determined that Hour and Borough Code are the most influential factors in determining the number of Uber pickups for May 2014 in NYC. The group notices the high p-values in the linear regression for Hour and Borough Code and have also noticed the third principal component was mostly influenced by Borough Code. From Figure 1, the group also notices that there exist clear patterns of fluctuation in the number of Uber pickups between each day of the week. This pattern is consistent across all four weeks in May 2014. In Figure 2, there is a considerable difference in the graphs based on the borough and can see in Borough Code 1 the massive increase in pickups later in the day or early in the morning. 
+
+
+
+```{r eval=FALSE, include=FALSE}
 library(olsrr)
 model1 = lm(pickup~., data = Ytilda)
 summary(model1)
@@ -346,8 +369,8 @@ Beta = coef(uber_model,ncomp = 5, intercept = T)
 Beta
 ```
 
-# matt you had this in uber.rmd
-```{r}
+
+```{r eval=FALSE, include=FALSE}
 library(plotly)
 library(rjson)
 r1 = 'http://data.beta.nyc//dataset/0ff93d2d-90ba-457c-9f7e-39e47bf2ac5f/resource/35dd04fb-81b3-479b-a074-a27a37888ce7/download/d085e2f8d0b54d4590b1e7d1f35594c1pediacitiesnycneighborhoods.geojson'
