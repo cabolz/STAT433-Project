@@ -376,16 +376,3 @@ fig <- fig %>% layout(
 fig
 
 ```
-
-
-
-# write stuff needed for app at the end here
-```{r}
-
-wrtie_csv(fullData, "FullData.csv")
-```
-
-
-
-
-
