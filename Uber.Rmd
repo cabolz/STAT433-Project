@@ -249,7 +249,10 @@ choropleth5 = choropleth %>%
 
 ```{r}
 write_csv(choropleth1, "choropleth1.csv")
-
+write_csv(choropleth2, "choropleth2.csv")
+write_csv(choropleth3, "choropleth3.csv")
+write_csv(choropleth4, "choropleth4.csv")
+write_csv(choropleth5, "choropleth5.csv")
 ```
 
 
