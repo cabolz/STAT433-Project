@@ -186,7 +186,7 @@ Y<-fullData %>%
 #Do we still need Y above?
 Yhat = fullData %>% 
   na.omit(boroughCode) %>% 
-  group_by(boroughCode,hour,day) %>% 
+  group_by(boroughCode,hour,day,dayOfWeek) %>% 
   summarize(pickup = n()) %>% 
   mutate(hour = as.double(hour)) %>% 
   mutate(day = as.double(day)) 
