@@ -1,0 +1,14 @@
+name: STAT433-Project
+title: STAT433-Project
+username:
+account: cabolz
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4087177
+bundleId: 4563305
+url: https://cabolz.shinyapps.io/STAT433-Project/
+when: 1620270363.50528
+lastSyncTime: 1620270363.50528
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: aprildata.csv|data.csv|Figure1.pdf|Figure1.Rmd|Final Project.Rmd|fullData.csv|humidity.csv|nyc_map.Rmd|pressure.csv|temperature.csv|uber-raw-data-apr14.csv|uber-raw-data-may14.csv|Uber.Rmd|UberandWeather.csv|UberWeatherBorough.csv|weather_description.csv|wind_speed.csv
