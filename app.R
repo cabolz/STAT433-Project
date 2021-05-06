@@ -6,32 +6,22 @@ library(ggplot2)
 library(stringr)
 library(tidyverse)
 
-borough<- c("Manhattan","Brooklyn","Queens","Bronx","Staten Island")
-# register_google(key = "AIzaSyB62vo0Ry0KhRaMYc4LW0z2mEF7l25s4LU")
 
-# Get lat/long coordinates for NY counties
-choropleth = map_data("county") %>% 
-  filter(region == "new york") %>% 
-  select(-group, -order, - region) %>% 
-  rename(County = subregion) %>% 
-  mutate(County = str_to_title(County)) %>% 
-  filter(County == "New York" | County == "Kings" | County == "Queens" | 
-           County == "Bronx" | County == "Richmond")
 
 ui <- fluidPage(
   titlePanel("NYC Uber Pickup"),
   sidebarLayout(
     sidebarPanel(
       helpText("data from NYC Taxi & Limousine Commission"),
-      sliderInput("range","May 2014",value=c(1,31),min=1,max=31)),
-      #selectInput("var","Which borough would you like to see?",borough)),
+    sliderInput("range", label = h3("Slider Range for May 2014"), min = 1, 
+                max = 31, value = c(10, 20))),
     mainPanel(plotlyOutput(outputId = "countyChoropleth"))))
 
 server <- function(input, output) {
   output$countyChoropleth <- renderPlotly({
 
-    plot = ggplot(choropleth, aes(long, lat, group = County)) +
-      geom_polygon(aes(fill = County), colour = alpha("black", 1/2), size = 0.1)  +
+    plot = ggplot(choropleth, aes(long, lat, group = borough)) +
+      geom_polygon(aes(fill = pickups), colour = alpha("black", 1/2), size = 0.1)  +
       labs (
         title = "Number of Species by County") +
       theme(
@@ -41,10 +31,11 @@ server <- function(input, output) {
         axis.text = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
-      )
+      )+
+      scale_fill_viridis_c(option = "magma")
 
     # Remove ability to pan and zoom, set plot dimensions
-    ggplotly(plot, width = 700, tooltip = c("County", "Species", "Density")) %>%
+    ggplotly(plot, width = 700, tooltip = c("borough", "pickups")) %>%
       plotly::config(displayModeBar = T) %>%
       layout(xaxis=list(fixedrange=F),
              yaxis=list(fixedrange=F))
